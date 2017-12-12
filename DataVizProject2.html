@@ -1,0 +1,2817 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Brian Grob, Ryan Strong, Sam Johnson" />
+
+<meta name="date" content="2017-12-11" />
+
+<title>DataVizProject2</title>
+
+<script src="DataVizProject2_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="DataVizProject2_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="DataVizProject2_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="DataVizProject2_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="DataVizProject2_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="DataVizProject2_files/navigation-1.1/tabsets.js"></script>
+<link href="DataVizProject2_files/highlightjs-1.1/default.css" rel="stylesheet" />
+<script src="DataVizProject2_files/highlightjs-1.1/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">DataVizProject2</h1>
+<h4 class="author"><em>Brian Grob, Ryan Strong, Sam Johnson</em></h4>
+<h4 class="date"><em>December 11, 2017</em></h4>
+
+</div>
+
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<div id="for-this-project-we-looked-at-data-on-the-political-donations-made-by-people-who-work-in-science-intensive-fields.-this-data-extends-from-2006-to-2016.-in-this-exploration-we-focused-in-on-the-average-donations-from-people-in-science-intensive-fields-in-each-state-over-the-past-three-presidential-elections-the-differences-in-donations-between-scientists-engineers-and-mathematiciansstatisticians-and-the-differences-in-donations-in-presidetial-elections-vs-senatehouse-elections." class="section level3">
+<h3>For this project, we looked at data on the political donations made by people who work in science intensive fields. This data extends from 2006 to 2016. In this exploration we focused in on the average donations from people in science intensive fields in each state over the past three presidential elections, the differences in donations between scientists, engineers, and mathematicians/statisticians, and the differences in donations in Presidetial elections vs Senate/House elections.</h3>
+<div id="first-we-downloaded-the-dataset." class="section level4">
+<h4>First we downloaded the dataset.</h4>
+<pre class="r"><code>library(readr)
+Q1 &lt;- read_csv(&quot;~/DataVizProject2/Workbook1.csv&quot;)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   state = col_character(),
+##   classification = col_character(),
+##   transaction_amt = col_integer(),
+##   cycle = col_integer()
+## )</code></pre>
+<pre class="r"><code>View(Q1)</code></pre>
+</div>
+<div id="then-we-downloaded-the-necessary-r-packages" class="section level4">
+<h4>Then we downloaded the necessary r packages</h4>
+<pre class="r"><code>library(ggplot2)
+library(dplyr)</code></pre>
+<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 3.4.2</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(tidyr)</code></pre>
+<pre><code>## Warning: package &#39;tidyr&#39; was built under R version 3.4.2</code></pre>
+<pre class="r"><code>library(streamgraph)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(googleVis)</code></pre>
+<pre><code>## Warning: package &#39;googleVis&#39; was built under R version 3.4.2</code></pre>
+<pre><code>## Creating a generic function for &#39;toJSON&#39; from package &#39;jsonlite&#39; in package &#39;googleVis&#39;</code></pre>
+<pre><code>## 
+## Welcome to googleVis version 0.6.2
+## 
+## Please read Google&#39;s Terms of Use
+## before you start using the package:
+## https://developers.google.com/terms/
+## 
+## Note, the plot method of googleVis will by default use
+## the standard browser to display its output.
+## 
+## See the googleVis package vignettes for more details,
+## or visit http://github.com/mages/googleVis.
+## 
+## To suppress this message use:
+## suppressPackageStartupMessages(library(googleVis))</code></pre>
+<pre class="r"><code>library(datasets)
+library(gudatavizfa17)
+Q1=Q1</code></pre>
+</div>
+</div>
+<div id="our-first-task-was-to-study-the-differences-in-donations-across-different-states-among-people-with-science-intensive-jobs-for-presidential-elections-across-the-three-election-cycles." class="section level2">
+<h2>Our First task was to study the differences in donations across different states among people with science-intensive jobs for Presidential elections across the three election cycles.</h2>
+<div id="we-started-by-condensing-the-data-to-only-look-at-the-donations-made-in-the-2008-election-cycle." class="section level4">
+<h4>We started by condensing the data to only look at the donations made in the 2008 election cycle.</h4>
+<pre class="r"><code>Q1subset2 &lt;- subset(Q1, cycle == &quot;2008&quot; , select=state:cycle)</code></pre>
+</div>
+<div id="here-we-found-the-mean-donation-made-by-people-who-have-science-intensive-jobs-in-2008-based-on-the-state-they-are-from." class="section level4">
+<h4>Here we found the mean donation made by people who have science intensive jobs in 2008 based on the state they are from.</h4>
+<pre class="r"><code>Q1states2008=Q1subset2%&gt;%group_by(state)%&gt;%summarize(transaction_mean=mean(transaction_amt))</code></pre>
+</div>
+<div id="the-data-included-information-from-some-of-the-us-territories-and-had-some-holes-so-we-eliminated-all-of-the-rows-that-did-not-pertain-to-the-50-united-states." class="section level4">
+<h4>The data included information from some of the US territories and had some holes, so we eliminated all of the rows that did not pertain to the 50 United States.</h4>
+<pre class="r"><code>Q1states2008.2=Q1states2008[-c(3, 5, 10, 14, 43, 51, 57, 58),]</code></pre>
+</div>
+<div id="here-we-changed-the-names-of-states-from-their-abbreviated-form-to-their-actual-name-so-our-package-can-recognize-them." class="section level4">
+<h4>Here we changed the names of states from their abbreviated form to their actual name so our package can recognize them.</h4>
+<pre class="r"><code>Q1states2008.2$states=c(&quot;Alaska&quot;, &quot;Alabama&quot;, &quot;Arkansas&quot;, &quot;Arizona&quot;, &quot;California&quot;, &quot;Colorado&quot;, &quot;Connecticut&quot;, &quot;Delaware&quot;, &quot;Florida&quot;, &quot;Georgia&quot;, &quot;Hawaii&quot;, &quot;Iowa&quot;, &quot;Idaho&quot;, &quot;Illinois&quot;, &quot;Indiana&quot;, &quot;Kansas&quot;, &quot;Kentucky&quot;, &quot;Louisiana&quot;, &quot;Massachusetts&quot;, &quot;Maryland&quot;, &quot;Maine&quot;, &quot;Michigan&quot;, &quot;Minnesota&quot;, &quot;Missouri&quot;, &quot;Mississippi&quot;, &quot;Montana&quot;, &quot;North Carolina&quot;, &quot;North Dakota&quot;, &quot;Nebraska&quot;, &quot;New Hampshire&quot;, &quot;New Jersey&quot;, &quot;New Mexico&quot;, &quot;Nevada&quot;, &quot;New York&quot;, &quot;Ohio&quot;, &quot;Oklahoma&quot;, &quot;Oregon&quot;, &quot;Pennsylvania&quot;, &quot;Rhode Island&quot;, &quot;South Carolina&quot;, &quot;South Dakota&quot;, &quot;Tennessee&quot;, &quot;Texas&quot;, &quot;Utah&quot;, &quot;Virginia&quot;, &quot;Vermont&quot;, &quot;Washington&quot;, &quot;Wisconsin&quot;, &quot;West Virginia&quot;, &quot;Wyoming&quot;)</code></pre>
+</div>
+<div id="lastly-we-utilized-a-google-visualization-geo-chart-of-the-united-states.-we-shaded-each-state-based-on-the-average-donation-made-by-people-who-work-in-science-intensive-fields-in-2008.-the-darker-the-shade-the-greater-average-donation." class="section level3">
+<h3>Lastly we utilized a google visualization geo chart of the United States. We shaded each state based on the average donation made by people who work in science intensive fields in 2008. The darker the shade, the greater average donation.</h3>
+<pre class="r"><code>GeoStates2008 &lt;- gvisGeoChart(Q1states2008.2, &quot;states&quot;, &quot;transaction_mean&quot;, options=list(region=&quot;US&quot;, displayMode=&quot;regions&quot;, resolution=&quot;provinces&quot;, width=600, height=400))
+GeoStates2008</code></pre>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>
+GeoChartID63c4412845cf
+</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<style type="text/css">
+body {
+  color: #444444;
+  font-family: Arial,Helvetica,sans-serif;
+  font-size: 75%;
+  }
+  a {
+  color: #4D87C7;
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+<p><!-- GeoChart generated in R 3.4.1 by googleVis 0.6.2 package --> <!-- Tue Dec 12 11:22:34 2017 --></p>
+<!-- jsHeader -->
+<script type="text/javascript">
+ 
+// jsData 
+function gvisDataGeoChartID63c4412845cf () {
+var data = new google.visualization.DataTable();
+var datajson =
+[
+ [
+"Alaska",
+428.4970414
+],
+[
+"Alabama",
+571.006734
+],
+[
+"Arkansas",
+539.4214286
+],
+[
+"Arizona",
+465.8684654
+],
+[
+"California",
+523.0407821
+],
+[
+"Colorado",
+560.0638119
+],
+[
+"Connecticut",
+516.784965
+],
+[
+"Delaware",
+447.9181287
+],
+[
+"Florida",
+575.792176
+],
+[
+"Georgia",
+513.2090813
+],
+[
+"Hawaii",
+761.1935484
+],
+[
+"Iowa",
+493.3807947
+],
+[
+"Idaho",
+429.1301775
+],
+[
+"Illinois",
+503.7732003
+],
+[
+"Indiana",
+766.293578
+],
+[
+"Kansas",
+471.5225225
+],
+[
+"Kentucky",
+670.1890411
+],
+[
+"Louisiana",
+770.9134487
+],
+[
+"Massachusetts",
+491.7423047
+],
+[
+"Maryland",
+503.8144239
+],
+[
+"Maine",
+444.0064516
+],
+[
+"Michigan",
+529.4703704
+],
+[
+"Minnesota",
+464.155102
+],
+[
+"Missouri",
+452.590998
+],
+[
+"Mississippi",
+643.1834862
+],
+[
+"Montana",
+412.5448718
+],
+[
+"North Carolina",
+424.4857143
+],
+[
+"North Dakota",
+404.3255814
+],
+[
+"Nebraska",
+370.9439252
+],
+[
+"New Hampshire",
+613.729572
+],
+[
+"New Jersey",
+598.2451923
+],
+[
+"New Mexico",
+528.5561181
+],
+[
+"Nevada",
+703.9198895
+],
+[
+"New York",
+563.7603306
+],
+[
+"Ohio",
+506.5831843
+],
+[
+"Oklahoma",
+717.2939189
+],
+[
+"Oregon",
+424.1854749
+],
+[
+"Pennsylvania",
+517.7432139
+],
+[
+"Rhode Island",
+497.2222222
+],
+[
+"South Carolina",
+475.888601
+],
+[
+"South Dakota",
+714.9509804
+],
+[
+"Tennessee",
+503.0632911
+],
+[
+"Texas",
+623.8463024
+],
+[
+"Utah",
+602.8006231
+],
+[
+"Virginia",
+516.4215447
+],
+[
+"Vermont",
+369.8414634
+],
+[
+"Washington",
+533.3277994
+],
+[
+"Wisconsin",
+452.1778929
+],
+[
+"West Virginia",
+702.9722222
+],
+[
+"Wyoming",
+665.7861272
+] 
+];
+data.addColumn('string','states');
+data.addColumn('number','transaction_mean');
+data.addRows(datajson);
+return(data);
+}
+ 
+// jsDrawChart
+function drawChartGeoChartID63c4412845cf() {
+var data = gvisDataGeoChartID63c4412845cf();
+var options = {};
+options["width"] = 600;
+options["height"] = 400;
+options["region"] = "US";
+options["displayMode"] = "regions";
+options["resolution"] = "provinces";
+
+    var chart = new google.visualization.GeoChart(
+    document.getElementById('GeoChartID63c4412845cf')
+    );
+    chart.draw(data,options);
+    
+
+}
+  
+ 
+// jsDisplayChart
+(function() {
+var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+var chartid = "geochart";
+  
+// Manually see if chartid is in pkgs (not all browsers support Array.indexOf)
+var i, newPackage = true;
+for (i = 0; newPackage && i < pkgs.length; i++) {
+if (pkgs[i] === chartid)
+newPackage = false;
+}
+if (newPackage)
+  pkgs.push(chartid);
+  
+// Add the drawChart function to the global list of callbacks
+callbacks.push(drawChartGeoChartID63c4412845cf);
+})();
+function displayChartGeoChartID63c4412845cf() {
+  var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+  var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+  window.clearTimeout(window.__gvisLoad);
+  // The timeout is set to 100 because otherwise the container div we are
+  // targeting might not be part of the document yet
+  window.__gvisLoad = setTimeout(function() {
+  var pkgCount = pkgs.length;
+  google.load("visualization", "1", { packages:pkgs, callback: function() {
+  if (pkgCount != pkgs.length) {
+  // Race condition where another setTimeout call snuck in after us; if
+  // that call added a package, we must not shift its callback
+  return;
+}
+while (callbacks.length > 0)
+callbacks.shift()();
+} });
+}, 100);
+}
+ 
+// jsFooter
+</script>
+<!-- jsChart -->
+<script type="text/javascript" src="https://www.google.com/jsapi?callback=displayChartGeoChartID63c4412845cf"></script>
+<!-- divChart -->
+<div id="GeoChartID63c4412845cf" style="width: 600; height: 400;">
+
+</div>
+<div>
+<span>Data: Q1states2008.2 • Chart ID: <a href="Chart_GeoChartID63c4412845cf.html">GeoChartID63c4412845cf</a> • <a href="https://github.com/mages/googleVis">googleVis-0.6.2</a></span><br /> <!-- htmlFooter --> <span> R version 3.4.1 (2017-06-30) • <a href="https://developers.google.com/terms/">Google Terms of Use</a> • <a href="https://google-developers.appspot.com/chart/interactive/docs/gallery/geochart">Documentation and Data Policy</a> </span>
+</div>
+</body>
+</html>
+</div>
+<div id="we-then-repeated-this-process-for-the-2012-election-cycle." class="section level3">
+<h3>We then repeated this process for the 2012 election cycle.</h3>
+<pre class="r"><code>Q1subset3 &lt;- subset(Q1, cycle == &quot;2012&quot; , select=state:cycle)</code></pre>
+<pre class="r"><code>Q1states2012=Q1subset3%&gt;%group_by(state)%&gt;%summarize(transaction_mean=mean(transaction_amt))</code></pre>
+<pre class="r"><code>Q1states2012.2=Q1states2012[-c(1, 5, 10, 14, 43, 51, 57, 58),]</code></pre>
+<pre class="r"><code>Q1states2012.2$states=c(&quot;Alaska&quot;, &quot;Alabama&quot;, &quot;Arkansas&quot;, &quot;Arizona&quot;, &quot;California&quot;, &quot;Colorado&quot;, &quot;Connecticut&quot;, &quot;Delaware&quot;, &quot;Florida&quot;, &quot;Georgia&quot;, &quot;Hawaii&quot;, &quot;Iowa&quot;, &quot;Idaho&quot;, &quot;Illinois&quot;, &quot;Indiana&quot;, &quot;Kansas&quot;, &quot;Kentucky&quot;, &quot;Louisiana&quot;, &quot;Massachusetts&quot;, &quot;Maryland&quot;, &quot;Maine&quot;, &quot;Michigan&quot;, &quot;Minnesota&quot;, &quot;Missouri&quot;, &quot;Mississippi&quot;, &quot;Montana&quot;, &quot;North Carolina&quot;, &quot;North Dakota&quot;, &quot;Nebraska&quot;, &quot;New Hampshire&quot;, &quot;New Jersey&quot;, &quot;New Mexico&quot;, &quot;Nevada&quot;, &quot;New York&quot;, &quot;Ohio&quot;, &quot;Oklahoma&quot;, &quot;Oregon&quot;, &quot;Pennsylvania&quot;, &quot;Rhode Island&quot;, &quot;South Carolina&quot;, &quot;South Dakota&quot;, &quot;Tennessee&quot;, &quot;Texas&quot;, &quot;Utah&quot;, &quot;Virginia&quot;, &quot;Vermont&quot;, &quot;Washington&quot;, &quot;Wisconsin&quot;, &quot;West Virginia&quot;, &quot;Wyoming&quot;)</code></pre>
+<pre class="r"><code>GeoStates2012 &lt;- gvisGeoChart(Q1states2012.2, &quot;states&quot;, &quot;transaction_mean&quot;, options=list(region=&quot;US&quot;, displayMode=&quot;regions&quot;, resolution=&quot;provinces&quot;, width=600, height=400))
+GeoStates2012</code></pre>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>
+GeoChartID63c43c4a77b6
+</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<style type="text/css">
+body {
+  color: #444444;
+  font-family: Arial,Helvetica,sans-serif;
+  font-size: 75%;
+  }
+  a {
+  color: #4D87C7;
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+<p><!-- GeoChart generated in R 3.4.1 by googleVis 0.6.2 package --> <!-- Tue Dec 12 11:22:34 2017 --></p>
+<!-- jsHeader -->
+<script type="text/javascript">
+ 
+// jsData 
+function gvisDataGeoChartID63c43c4a77b6 () {
+var data = new google.visualization.DataTable();
+var datajson =
+[
+ [
+"Alaska",
+498.8816568
+],
+[
+"Alabama",
+490.1551402
+],
+[
+"Arkansas",
+521.7610619
+],
+[
+"Arizona",
+438.5004163
+],
+[
+"California",
+514.7933681
+],
+[
+"Colorado",
+553.1742843
+],
+[
+"Connecticut",
+522.8608563
+],
+[
+"Delaware",
+459.8780488
+],
+[
+"Florida",
+553.4068602
+],
+[
+"Georgia",
+406.6268657
+],
+[
+"Hawaii",
+693.5768262
+],
+[
+"Iowa",
+438.1606061
+],
+[
+"Idaho",
+442.2101449
+],
+[
+"Illinois",
+483.0414847
+],
+[
+"Indiana",
+539.3944223
+],
+[
+"Kansas",
+462.4940711
+],
+[
+"Kentucky",
+816.3136792
+],
+[
+"Louisiana",
+733.2747875
+],
+[
+"Massachusetts",
+485.6927769
+],
+[
+"Maryland",
+518.5167232
+],
+[
+"Maine",
+540.8596491
+],
+[
+"Michigan",
+601.0859813
+],
+[
+"Minnesota",
+459.0943396
+],
+[
+"Missouri",
+475.0324232
+],
+[
+"Mississippi",
+608.4744186
+],
+[
+"Montana",
+578.4896266
+],
+[
+"North Carolina",
+411.6120332
+],
+[
+"North Dakota",
+611.4311927
+],
+[
+"Nebraska",
+429.2524752
+],
+[
+"New Hampshire",
+505.1818182
+],
+[
+"New Jersey",
+533.7226744
+],
+[
+"New Mexico",
+471.2573386
+],
+[
+"Nevada",
+467.1359223
+],
+[
+"New York",
+523.5975661
+],
+[
+"Ohio",
+499.7253401
+],
+[
+"Oklahoma",
+796.7439222
+],
+[
+"Oregon",
+412.6269939
+],
+[
+"Pennsylvania",
+544.081768
+],
+[
+"Rhode Island",
+445.7664234
+],
+[
+"South Carolina",
+515.8453333
+],
+[
+"South Dakota",
+506.2345679
+],
+[
+"Tennessee",
+498.459707
+],
+[
+"Texas",
+625.5826567
+],
+[
+"Utah",
+468.4987406
+],
+[
+"Virginia",
+447.3936508
+],
+[
+"Vermont",
+356.5436893
+],
+[
+"Washington",
+509.3040182
+],
+[
+"Wisconsin",
+433.0910569
+],
+[
+"West Virginia",
+765.9739583
+],
+[
+"Wyoming",
+601.8235294
+] 
+];
+data.addColumn('string','states');
+data.addColumn('number','transaction_mean');
+data.addRows(datajson);
+return(data);
+}
+ 
+// jsDrawChart
+function drawChartGeoChartID63c43c4a77b6() {
+var data = gvisDataGeoChartID63c43c4a77b6();
+var options = {};
+options["width"] = 600;
+options["height"] = 400;
+options["region"] = "US";
+options["displayMode"] = "regions";
+options["resolution"] = "provinces";
+
+    var chart = new google.visualization.GeoChart(
+    document.getElementById('GeoChartID63c43c4a77b6')
+    );
+    chart.draw(data,options);
+    
+
+}
+  
+ 
+// jsDisplayChart
+(function() {
+var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+var chartid = "geochart";
+  
+// Manually see if chartid is in pkgs (not all browsers support Array.indexOf)
+var i, newPackage = true;
+for (i = 0; newPackage && i < pkgs.length; i++) {
+if (pkgs[i] === chartid)
+newPackage = false;
+}
+if (newPackage)
+  pkgs.push(chartid);
+  
+// Add the drawChart function to the global list of callbacks
+callbacks.push(drawChartGeoChartID63c43c4a77b6);
+})();
+function displayChartGeoChartID63c43c4a77b6() {
+  var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+  var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+  window.clearTimeout(window.__gvisLoad);
+  // The timeout is set to 100 because otherwise the container div we are
+  // targeting might not be part of the document yet
+  window.__gvisLoad = setTimeout(function() {
+  var pkgCount = pkgs.length;
+  google.load("visualization", "1", { packages:pkgs, callback: function() {
+  if (pkgCount != pkgs.length) {
+  // Race condition where another setTimeout call snuck in after us; if
+  // that call added a package, we must not shift its callback
+  return;
+}
+while (callbacks.length > 0)
+callbacks.shift()();
+} });
+}, 100);
+}
+ 
+// jsFooter
+</script>
+<!-- jsChart -->
+<script type="text/javascript" src="https://www.google.com/jsapi?callback=displayChartGeoChartID63c43c4a77b6"></script>
+<!-- divChart -->
+<div id="GeoChartID63c43c4a77b6" style="width: 600; height: 400;">
+
+</div>
+<div>
+<span>Data: Q1states2012.2 • Chart ID: <a href="Chart_GeoChartID63c43c4a77b6.html">GeoChartID63c43c4a77b6</a> • <a href="https://github.com/mages/googleVis">googleVis-0.6.2</a></span><br /> <!-- htmlFooter --> <span> R version 3.4.1 (2017-06-30) • <a href="https://developers.google.com/terms/">Google Terms of Use</a> • <a href="https://google-developers.appspot.com/chart/interactive/docs/gallery/geochart">Documentation and Data Policy</a> </span>
+</div>
+</body>
+</html>
+</div>
+<div id="we-then-repeated-this-process-for-the-the-2016-election-cycle." class="section level3">
+<h3>We then repeated this process for the the 2016 election cycle.</h3>
+<pre class="r"><code>Q1subset4 &lt;- subset(Q1, cycle == &quot;2016&quot; , select=state:cycle)</code></pre>
+<pre class="r"><code>Q1states2016=Q1subset4%&gt;%group_by(state)%&gt;%summarize(transaction_mean=mean(transaction_amt))</code></pre>
+<pre class="r"><code>Q1states2016.2=Q1states2016[-c(1, 2, 3, 6, 8, 13, 17, 46, 47, 55, 61, 62),]</code></pre>
+<pre class="r"><code>Q1states2016.2$states=c(&quot;Alaska&quot;, &quot;Alabama&quot;, &quot;Arkansas&quot;, &quot;Arizona&quot;, &quot;California&quot;, &quot;Colorado&quot;, &quot;Connecticut&quot;, &quot;Delaware&quot;, &quot;Florida&quot;, &quot;Georgia&quot;, &quot;Hawaii&quot;, &quot;Iowa&quot;, &quot;Idaho&quot;, &quot;Illinois&quot;, &quot;Indiana&quot;, &quot;Kansas&quot;, &quot;Kentucky&quot;, &quot;Louisiana&quot;, &quot;Massachusetts&quot;, &quot;Maryland&quot;, &quot;Maine&quot;, &quot;Michigan&quot;, &quot;Minnesota&quot;, &quot;Missouri&quot;, &quot;Mississippi&quot;, &quot;Montana&quot;, &quot;North Carolina&quot;, &quot;North Dakota&quot;, &quot;Nebraska&quot;, &quot;New Hampshire&quot;, &quot;New Jersey&quot;, &quot;New Mexico&quot;, &quot;Nevada&quot;, &quot;New York&quot;, &quot;Ohio&quot;, &quot;Oklahoma&quot;, &quot;Oregon&quot;, &quot;Pennsylvania&quot;, &quot;Rhode Island&quot;, &quot;South Carolina&quot;, &quot;South Dakota&quot;, &quot;Tennessee&quot;, &quot;Texas&quot;, &quot;Utah&quot;, &quot;Virginia&quot;, &quot;Vermont&quot;, &quot;Washington&quot;, &quot;Wisconsin&quot;, &quot;West Virginia&quot;, &quot;Wyoming&quot;)</code></pre>
+<pre class="r"><code>GeoStates2016 &lt;- gvisGeoChart(Q1states2016.2, &quot;states&quot;, &quot;transaction_mean&quot;, options=list(region=&quot;US&quot;, displayMode=&quot;regions&quot;, resolution=&quot;provinces&quot;, width=600, height=400))
+GeoStates2016</code></pre>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>
+GeoChartID63c43dd6696a
+</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<style type="text/css">
+body {
+  color: #444444;
+  font-family: Arial,Helvetica,sans-serif;
+  font-size: 75%;
+  }
+  a {
+  color: #4D87C7;
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+<p><!-- GeoChart generated in R 3.4.1 by googleVis 0.6.2 package --> <!-- Tue Dec 12 11:22:35 2017 --></p>
+<!-- jsHeader -->
+<script type="text/javascript">
+ 
+// jsData 
+function gvisDataGeoChartID63c43dd6696a () {
+var data = new google.visualization.DataTable();
+var datajson =
+[
+ [
+"Alaska",
+95.36282395
+],
+[
+"Alabama",
+129.7281697
+],
+[
+"Arkansas",
+127.5647482
+],
+[
+"Arizona",
+94.14820387
+],
+[
+"California",
+129.6185419
+],
+[
+"Colorado",
+113.6709186
+],
+[
+"Connecticut",
+101.8723966
+],
+[
+"Delaware",
+94.16978417
+],
+[
+"Florida",
+151.4447964
+],
+[
+"Georgia",
+107.8664039
+],
+[
+"Hawaii",
+180.2103408
+],
+[
+"Iowa",
+94.45276498
+],
+[
+"Idaho",
+96.86424242
+],
+[
+"Illinois",
+114.9391543
+],
+[
+"Indiana",
+152.4346083
+],
+[
+"Kansas",
+95.95149036
+],
+[
+"Kentucky",
+218.6737705
+],
+[
+"Louisiana",
+392.1895846
+],
+[
+"Massachusetts",
+111.7039344
+],
+[
+"Maryland",
+123.3695138
+],
+[
+"Maine",
+80.25971731
+],
+[
+"Michigan",
+105.6287051
+],
+[
+"Minnesota",
+75.59035088
+],
+[
+"Missouri",
+92.13594538
+],
+[
+"Mississippi",
+154.259854
+],
+[
+"Montana",
+153.1156863
+],
+[
+"North Carolina",
+100.1361618
+],
+[
+"North Dakota",
+164.9857143
+],
+[
+"Nebraska",
+69.82545455
+],
+[
+"New Hampshire",
+98.57445282
+],
+[
+"New Jersey",
+131.0605232
+],
+[
+"New Mexico",
+121.7303371
+],
+[
+"Nevada",
+115.9690382
+],
+[
+"New York",
+112.1072619
+],
+[
+"Ohio",
+117.6475701
+],
+[
+"Oklahoma",
+373.5778165
+],
+[
+"Oregon",
+74.12391629
+],
+[
+"Pennsylvania",
+122.1011778
+],
+[
+"Rhode Island",
+61.71550985
+],
+[
+"South Carolina",
+125.7171717
+],
+[
+"South Dakota",
+121.3982558
+],
+[
+"Tennessee",
+122.767037
+],
+[
+"Texas",
+161.5066973
+],
+[
+"Utah",
+89.84089001
+],
+[
+"Virginia",
+109.2051282
+],
+[
+"Vermont",
+62.38004751
+],
+[
+"Washington",
+115.4494777
+],
+[
+"Wisconsin",
+114.7570137
+],
+[
+"West Virginia",
+103.5174538
+],
+[
+"Wyoming",
+164.3848315
+] 
+];
+data.addColumn('string','states');
+data.addColumn('number','transaction_mean');
+data.addRows(datajson);
+return(data);
+}
+ 
+// jsDrawChart
+function drawChartGeoChartID63c43dd6696a() {
+var data = gvisDataGeoChartID63c43dd6696a();
+var options = {};
+options["width"] = 600;
+options["height"] = 400;
+options["region"] = "US";
+options["displayMode"] = "regions";
+options["resolution"] = "provinces";
+
+    var chart = new google.visualization.GeoChart(
+    document.getElementById('GeoChartID63c43dd6696a')
+    );
+    chart.draw(data,options);
+    
+
+}
+  
+ 
+// jsDisplayChart
+(function() {
+var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+var chartid = "geochart";
+  
+// Manually see if chartid is in pkgs (not all browsers support Array.indexOf)
+var i, newPackage = true;
+for (i = 0; newPackage && i < pkgs.length; i++) {
+if (pkgs[i] === chartid)
+newPackage = false;
+}
+if (newPackage)
+  pkgs.push(chartid);
+  
+// Add the drawChart function to the global list of callbacks
+callbacks.push(drawChartGeoChartID63c43dd6696a);
+})();
+function displayChartGeoChartID63c43dd6696a() {
+  var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+  var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+  window.clearTimeout(window.__gvisLoad);
+  // The timeout is set to 100 because otherwise the container div we are
+  // targeting might not be part of the document yet
+  window.__gvisLoad = setTimeout(function() {
+  var pkgCount = pkgs.length;
+  google.load("visualization", "1", { packages:pkgs, callback: function() {
+  if (pkgCount != pkgs.length) {
+  // Race condition where another setTimeout call snuck in after us; if
+  // that call added a package, we must not shift its callback
+  return;
+}
+while (callbacks.length > 0)
+callbacks.shift()();
+} });
+}, 100);
+}
+ 
+// jsFooter
+</script>
+<!-- jsChart -->
+<script type="text/javascript" src="https://www.google.com/jsapi?callback=displayChartGeoChartID63c43dd6696a"></script>
+<!-- divChart -->
+<div id="GeoChartID63c43dd6696a" style="width: 600; height: 400;">
+
+</div>
+<div>
+<span>Data: Q1states2016.2 • Chart ID: <a href="Chart_GeoChartID63c43dd6696a.html">GeoChartID63c43dd6696a</a> • <a href="https://github.com/mages/googleVis">googleVis-0.6.2</a></span><br /> <!-- htmlFooter --> <span> R version 3.4.1 (2017-06-30) • <a href="https://developers.google.com/terms/">Google Terms of Use</a> • <a href="https://google-developers.appspot.com/chart/interactive/docs/gallery/geochart">Documentation and Data Policy</a> </span>
+</div>
+</body>
+</html>
+<div id="the-most-striking-observation-that-comes-from-the-comparison-of-the-donation-data-across-the-three-election-cycles-was-how-low-the-average-donation-was-in-2016-in-comparison-to-2012-and-2008.-in-2016-the-range-of-average-donations-in-the-united-states-from-science-intensive-workers-was-61-392.-in-2012-and-2008-the-ranges-were-357-816-and-370-771-respectively.-with-the-excessive-media-attention-surrounding-the-2016-election-we-imagine-more-people-felt-called-to-donate-to-their-political-party.-these-people-are-likely-less-passionate-than-those-who-would-have-donated-regardless-so-their-donations-were-likely-smaller-bringing-the-averages-down." class="section level4">
+<h4>The most striking observation that comes from the comparison of the donation data across the three election cycles was how low the average donation was in 2016 in comparison to 2012 and 2008. In 2016 the range of average donations in the United States from science intensive workers was $61-$392. In 2012 and 2008, the ranges were $357-$816 and $370-$771 respectively. With the excessive media attention surrounding the 2016 election, we imagine more people felt called to donate to their political party. These people are likely less passionate than those who would have donated regardless, so their donations were likely smaller bringing the averages down.</h4>
+</div>
+<div id="another-observation-we-made-was-that-states-that-typically-are-rebuplican-leaning-had-the-highest-average-donation-in-all-three-election-cycles.-states-such-as-oklahoma-lousiana-and-kentucky-were-always-near-the-top-of-average-donations-made-by-people-in-science-intensive-fields.-since-most-people-in-science-intensive-fields-tend-to-lean-democratic-the-people-in-these-conservative-states-likely-felt-the-need-to-donate-more-in-order-to-change-the-political-climate-so-issues-they-care-about-such-as-environmental-issues-would-be-considered." class="section level4">
+<h4>Another observation we made was that states that typically are Rebuplican leaning had the highest average donation in all three election cycles. States such as Oklahoma, Lousiana, and Kentucky were always near the top of average donations made by people in science intensive fields. Since most people in science intensive fields tend to lean Democratic, the people in these conservative states likely felt the need to donate more in order to change the political climate, so issues they care about, such as environmental issues, would be considered.</h4>
+</div>
+</div>
+</div>
+<div id="our-next-task-was-to-determine-if-there-were-differences-in-donation-patterns-across-the-three-types-of-classifications-of-science-intensive-fields-engineers-scientists-and-mathematiciansstatisticians." class="section level2">
+<h2>Our next task was to determine if there were differences in donation patterns across the three types of classifications of science intensive fields: Engineers, Scientists, and Mathematicians/Statisticians.</h2>
+<div id="we-started-by-condensing-our-data-to-only-look-at-the-donations-from-scientists-during-the-2016-election-cycle." class="section level4">
+<h4>We started by condensing our data to only look at the donations from scientists during the 2016 election cycle.</h4>
+<pre class="r"><code>Q1subsetsci &lt;- subset(Q1, classification == &quot;Scientist&quot; , select=state:cycle) </code></pre>
+<pre class="r"><code>Q1subsetsci2016 &lt;- subset(Q1subsetsci, cycle == &quot;2016&quot; , select=state:cycle)</code></pre>
+</div>
+<div id="here-we-found-the-mean-donation-made-by-scientists-in-2016-based-on-the-state-they-are-from." class="section level4">
+<h4>Here we found the mean donation made by scientists in 2016 based on the state they are from.</h4>
+<pre class="r"><code>Q1states2016sci=Q1subsetsci2016%&gt;%group_by(state)%&gt;%summarize(transaction_mean=mean(transaction_amt))</code></pre>
+</div>
+<div id="the-data-included-information-from-some-of-the-us-territories-and-had-some-holes-so-we-eliminated-all-of-the-rows-that-did-not-pertain-to-the-50-united-states.-1" class="section level4">
+<h4>The data included information from some of the US territories and had some holes, so we eliminated all of the rows that did not pertain to the 50 United States.</h4>
+<pre class="r"><code>Q1states2016sci.2=Q1states2016sci[-c(1, 2, 3, 6, 8, 13, 45, 53, 59, 60),]</code></pre>
+</div>
+<div id="here-we-changed-the-names-of-states-from-their-abbreviated-form-to-their-actual-name-so-our-package-can-recognize-them.-1" class="section level4">
+<h4>Here we changed the names of states from their abbreviated form to their actual name so our package can recognize them.</h4>
+<pre class="r"><code>Q1states2016sci.2$states=c(&quot;Alaska&quot;, &quot;Alabama&quot;, &quot;Arkansas&quot;, &quot;Arizona&quot;, &quot;California&quot;, &quot;Colorado&quot;, &quot;Connecticut&quot;, &quot;Delaware&quot;, &quot;Florida&quot;, &quot;Georgia&quot;, &quot;Hawaii&quot;, &quot;Iowa&quot;, &quot;Idaho&quot;, &quot;Illinois&quot;, &quot;Indiana&quot;, &quot;Kansas&quot;, &quot;Kentucky&quot;, &quot;Louisiana&quot;, &quot;Massachusetts&quot;, &quot;Maryland&quot;, &quot;Maine&quot;, &quot;Michigan&quot;, &quot;Minnesota&quot;, &quot;Missouri&quot;, &quot;Mississippi&quot;, &quot;Montana&quot;, &quot;North Carolina&quot;, &quot;North Dakota&quot;, &quot;Nebraska&quot;, &quot;New Hampshire&quot;, &quot;New Jersey&quot;, &quot;New Mexico&quot;, &quot;Nevada&quot;, &quot;New York&quot;, &quot;Ohio&quot;, &quot;Oklahoma&quot;, &quot;Oregon&quot;, &quot;Pennsylvania&quot;, &quot;Rhode Island&quot;, &quot;South Carolina&quot;, &quot;South Dakota&quot;, &quot;Tennessee&quot;, &quot;Texas&quot;, &quot;Utah&quot;, &quot;Virginia&quot;, &quot;Vermont&quot;, &quot;Washington&quot;, &quot;Wisconsin&quot;, &quot;West Virginia&quot;, &quot;Wyoming&quot;)</code></pre>
+</div>
+<div id="lastly-we-utilized-a-google-visualization-geo-chart-of-the-united-states.-we-shaded-each-state-based-on-the-average-donation-made-by-scientists-in-2016.-the-darker-the-shade-the-greater-average-donation." class="section level3">
+<h3>Lastly we utilized a google visualization geo chart of the United States. We shaded each state based on the average donation made by scientists in 2016. The darker the shade, the greater average donation.</h3>
+<pre class="r"><code>GeoStates2016sci &lt;- gvisGeoChart(Q1states2016sci.2, &quot;states&quot;, &quot;transaction_mean&quot;, options=list(region=&quot;US&quot;, displayMode=&quot;regions&quot;, resolution=&quot;provinces&quot;, width=600, height=400))
+GeoStates2016sci</code></pre>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>
+GeoChartID63c4678c355b
+</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<style type="text/css">
+body {
+  color: #444444;
+  font-family: Arial,Helvetica,sans-serif;
+  font-size: 75%;
+  }
+  a {
+  color: #4D87C7;
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+<p><!-- GeoChart generated in R 3.4.1 by googleVis 0.6.2 package --> <!-- Tue Dec 12 11:22:35 2017 --></p>
+<!-- jsHeader -->
+<script type="text/javascript">
+ 
+// jsData 
+function gvisDataGeoChartID63c4678c355b () {
+var data = new google.visualization.DataTable();
+var datajson =
+[
+ [
+"Alaska",
+112.9840637
+],
+[
+"Alabama",
+56.60773481
+],
+[
+"Arkansas",
+115.3679245
+],
+[
+"Arizona",
+116.6704082
+],
+[
+"California",
+155.6601811
+],
+[
+"Colorado",
+138.1547321
+],
+[
+"Connecticut",
+130.402439
+],
+[
+"Delaware",
+97.74299065
+],
+[
+"Florida",
+161.5879733
+],
+[
+"Georgia",
+106.996633
+],
+[
+"Hawaii",
+60.86307054
+],
+[
+"Iowa",
+102.1304348
+],
+[
+"Idaho",
+64.37623762
+],
+[
+"Illinois",
+153.9775641
+],
+[
+"Indiana",
+59.79012346
+],
+[
+"Kansas",
+91.67729084
+],
+[
+"Kentucky",
+100.8148148
+],
+[
+"Louisiana",
+287.1101322
+],
+[
+"Massachusetts",
+125.3985294
+],
+[
+"Maryland",
+133.735905
+],
+[
+"Maine",
+61.85933504
+],
+[
+"Michigan",
+118.296394
+],
+[
+"Minnesota",
+78.0278834
+],
+[
+"Missouri",
+71.07442748
+],
+[
+"Mississippi",
+89.9689441
+],
+[
+"Montana",
+121.1298701
+],
+[
+"North Carolina",
+71.80771704
+],
+[
+"North Dakota",
+96.81632653
+],
+[
+"Nebraska",
+67.72043011
+],
+[
+"New Hampshire",
+126.2049689
+],
+[
+"New Jersey",
+119.3881611
+],
+[
+"New Mexico",
+126.5899772
+],
+[
+"Nevada",
+150.505618
+],
+[
+"New York",
+118.9514395
+],
+[
+"Ohio",
+103.1344956
+],
+[
+"Oklahoma",
+108.5619469
+],
+[
+"Oregon",
+92.91143911
+],
+[
+"Pennsylvania",
+119.5832575
+],
+[
+"Rhode Island",
+65.64262295
+],
+[
+"South Carolina",
+97.32
+],
+[
+"South Dakota",
+82.25352113
+],
+[
+"Tennessee",
+96.95652174
+],
+[
+"Texas",
+138.5745394
+],
+[
+"Utah",
+91.352
+],
+[
+"Virginia",
+100.6746795
+],
+[
+"Vermont",
+50.54385965
+],
+[
+"Washington",
+102.0009836
+],
+[
+"Wisconsin",
+117.9909008
+],
+[
+"West Virginia",
+102.578125
+],
+[
+"Wyoming",
+86.14364641
+] 
+];
+data.addColumn('string','states');
+data.addColumn('number','transaction_mean');
+data.addRows(datajson);
+return(data);
+}
+ 
+// jsDrawChart
+function drawChartGeoChartID63c4678c355b() {
+var data = gvisDataGeoChartID63c4678c355b();
+var options = {};
+options["width"] = 600;
+options["height"] = 400;
+options["region"] = "US";
+options["displayMode"] = "regions";
+options["resolution"] = "provinces";
+
+    var chart = new google.visualization.GeoChart(
+    document.getElementById('GeoChartID63c4678c355b')
+    );
+    chart.draw(data,options);
+    
+
+}
+  
+ 
+// jsDisplayChart
+(function() {
+var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+var chartid = "geochart";
+  
+// Manually see if chartid is in pkgs (not all browsers support Array.indexOf)
+var i, newPackage = true;
+for (i = 0; newPackage && i < pkgs.length; i++) {
+if (pkgs[i] === chartid)
+newPackage = false;
+}
+if (newPackage)
+  pkgs.push(chartid);
+  
+// Add the drawChart function to the global list of callbacks
+callbacks.push(drawChartGeoChartID63c4678c355b);
+})();
+function displayChartGeoChartID63c4678c355b() {
+  var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+  var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+  window.clearTimeout(window.__gvisLoad);
+  // The timeout is set to 100 because otherwise the container div we are
+  // targeting might not be part of the document yet
+  window.__gvisLoad = setTimeout(function() {
+  var pkgCount = pkgs.length;
+  google.load("visualization", "1", { packages:pkgs, callback: function() {
+  if (pkgCount != pkgs.length) {
+  // Race condition where another setTimeout call snuck in after us; if
+  // that call added a package, we must not shift its callback
+  return;
+}
+while (callbacks.length > 0)
+callbacks.shift()();
+} });
+}, 100);
+}
+ 
+// jsFooter
+</script>
+<!-- jsChart -->
+<script type="text/javascript" src="https://www.google.com/jsapi?callback=displayChartGeoChartID63c4678c355b"></script>
+<!-- divChart -->
+<div id="GeoChartID63c4678c355b" style="width: 600; height: 400;">
+
+</div>
+<div>
+<span>Data: Q1states2016sci.2 • Chart ID: <a href="Chart_GeoChartID63c4678c355b.html">GeoChartID63c4678c355b</a> • <a href="https://github.com/mages/googleVis">googleVis-0.6.2</a></span><br /> <!-- htmlFooter --> <span> R version 3.4.1 (2017-06-30) • <a href="https://developers.google.com/terms/">Google Terms of Use</a> • <a href="https://google-developers.appspot.com/chart/interactive/docs/gallery/geochart">Documentation and Data Policy</a> </span>
+</div>
+</body>
+</html>
+</div>
+<div id="we-then-repeated-this-process-for-the-engineers." class="section level3">
+<h3>We then repeated this process for the engineers.</h3>
+<pre class="r"><code>Q1subsetengine &lt;- subset(Q1, classification == &quot;Engineer&quot; , select=state:cycle) </code></pre>
+<pre class="r"><code>Q1subsetengine2016 &lt;- subset(Q1subsetengine, cycle == &quot;2016&quot; , select=state:cycle)</code></pre>
+<pre class="r"><code>Q1states2016engine=Q1subsetengine2016%&gt;%group_by(state)%&gt;%summarize(transaction_mean=mean(transaction_amt))</code></pre>
+<pre class="r"><code>Q1states2016engine.2=Q1states2016engine[-c(1, 2, 5, 11, 15, 44, 45, 53, 59, 60),]</code></pre>
+<pre class="r"><code>Q1states2016engine.2$states=c(&quot;Alaska&quot;, &quot;Alabama&quot;, &quot;Arkansas&quot;, &quot;Arizona&quot;, &quot;California&quot;, &quot;Colorado&quot;, &quot;Connecticut&quot;, &quot;Delaware&quot;, &quot;Florida&quot;, &quot;Georgia&quot;, &quot;Hawaii&quot;, &quot;Iowa&quot;, &quot;Idaho&quot;, &quot;Illinois&quot;, &quot;Indiana&quot;, &quot;Kansas&quot;, &quot;Kentucky&quot;, &quot;Louisiana&quot;, &quot;Massachusetts&quot;, &quot;Maryland&quot;, &quot;Maine&quot;, &quot;Michigan&quot;, &quot;Minnesota&quot;, &quot;Missouri&quot;, &quot;Mississippi&quot;, &quot;Montana&quot;, &quot;North Carolina&quot;, &quot;North Dakota&quot;, &quot;Nebraska&quot;, &quot;New Hampshire&quot;, &quot;New Jersey&quot;, &quot;New Mexico&quot;, &quot;Nevada&quot;, &quot;New York&quot;, &quot;Ohio&quot;, &quot;Oklahoma&quot;, &quot;Oregon&quot;, &quot;Pennsylvania&quot;, &quot;Rhode Island&quot;, &quot;South Carolina&quot;, &quot;South Dakota&quot;, &quot;Tennessee&quot;, &quot;Texas&quot;, &quot;Utah&quot;, &quot;Virginia&quot;, &quot;Vermont&quot;, &quot;Washington&quot;, &quot;Wisconsin&quot;, &quot;West Virginia&quot;, &quot;Wyoming&quot;)</code></pre>
+<pre class="r"><code>GeoStates2016engine &lt;- gvisGeoChart(Q1states2016engine.2, &quot;states&quot;, &quot;transaction_mean&quot;, options=list(region=&quot;US&quot;, displayMode=&quot;regions&quot;, resolution=&quot;provinces&quot;, width=600, height=400))
+GeoStates2016engine</code></pre>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>
+GeoChartID63c4434971fc
+</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<style type="text/css">
+body {
+  color: #444444;
+  font-family: Arial,Helvetica,sans-serif;
+  font-size: 75%;
+  }
+  a {
+  color: #4D87C7;
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+<p><!-- GeoChart generated in R 3.4.1 by googleVis 0.6.2 package --> <!-- Tue Dec 12 11:22:36 2017 --></p>
+<!-- jsHeader -->
+<script type="text/javascript">
+ 
+// jsData 
+function gvisDataGeoChartID63c4434971fc () {
+var data = new google.visualization.DataTable();
+var datajson =
+[
+ [
+"Alaska",
+90.68229777
+],
+[
+"Alabama",
+146.4623786
+],
+[
+"Arkansas",
+132.1052632
+],
+[
+"Arizona",
+90.06564706
+],
+[
+"California",
+120.9891782
+],
+[
+"Colorado",
+108.9204847
+],
+[
+"Connecticut",
+95.14772261
+],
+[
+"Delaware",
+90.40434783
+],
+[
+"Florida",
+150.9092119
+],
+[
+"Georgia",
+108.9234064
+],
+[
+"Hawaii",
+230.7147651
+],
+[
+"Iowa",
+95.90420561
+],
+[
+"Idaho",
+101.5734072
+],
+[
+"Illinois",
+100.8541016
+],
+[
+"Indiana",
+189.1019417
+],
+[
+"Kansas",
+97.5509487
+],
+[
+"Kentucky",
+265.266436
+],
+[
+"Louisiana",
+435.4191714
+],
+[
+"Massachusetts",
+105.1542475
+],
+[
+"Maryland",
+118.569475
+],
+[
+"Maine",
+83.8734375
+],
+[
+"Michigan",
+103.22676
+],
+[
+"Minnesota",
+74.3742025
+],
+[
+"Missouri",
+95.8289358
+],
+[
+"Mississippi",
+174.5538462
+],
+[
+"Montana",
+152.673716
+],
+[
+"North Carolina",
+93.30297354
+],
+[
+"North Dakota",
+188.5316456
+],
+[
+"Nebraska",
+75.38990826
+],
+[
+"New Hampshire",
+94.20154335
+],
+[
+"New Jersey",
+138.4128476
+],
+[
+"New Mexico",
+117.0041465
+],
+[
+"Nevada",
+108.8556536
+],
+[
+"New York",
+111.8587357
+],
+[
+"Ohio",
+116.2998321
+],
+[
+"Oklahoma",
+475.3851081
+],
+[
+"Oregon",
+70.61577794
+],
+[
+"Pennsylvania",
+125.2174685
+],
+[
+"Rhode Island",
+60.57229648
+],
+[
+"South Carolina",
+130.9709945
+],
+[
+"South Dakota",
+133.2621723
+],
+[
+"Tennessee",
+147.7339873
+],
+[
+"Texas",
+168.3850635
+],
+[
+"Utah",
+88.2230137
+],
+[
+"Virginia",
+114.6001824
+],
+[
+"Vermont",
+64.675
+],
+[
+"Washington",
+118.1970409
+],
+[
+"Wisconsin",
+114.1745611
+],
+[
+"West Virginia",
+107.465
+],
+[
+"Wyoming",
+250.5352941
+] 
+];
+data.addColumn('string','states');
+data.addColumn('number','transaction_mean');
+data.addRows(datajson);
+return(data);
+}
+ 
+// jsDrawChart
+function drawChartGeoChartID63c4434971fc() {
+var data = gvisDataGeoChartID63c4434971fc();
+var options = {};
+options["width"] = 600;
+options["height"] = 400;
+options["region"] = "US";
+options["displayMode"] = "regions";
+options["resolution"] = "provinces";
+
+    var chart = new google.visualization.GeoChart(
+    document.getElementById('GeoChartID63c4434971fc')
+    );
+    chart.draw(data,options);
+    
+
+}
+  
+ 
+// jsDisplayChart
+(function() {
+var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+var chartid = "geochart";
+  
+// Manually see if chartid is in pkgs (not all browsers support Array.indexOf)
+var i, newPackage = true;
+for (i = 0; newPackage && i < pkgs.length; i++) {
+if (pkgs[i] === chartid)
+newPackage = false;
+}
+if (newPackage)
+  pkgs.push(chartid);
+  
+// Add the drawChart function to the global list of callbacks
+callbacks.push(drawChartGeoChartID63c4434971fc);
+})();
+function displayChartGeoChartID63c4434971fc() {
+  var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+  var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+  window.clearTimeout(window.__gvisLoad);
+  // The timeout is set to 100 because otherwise the container div we are
+  // targeting might not be part of the document yet
+  window.__gvisLoad = setTimeout(function() {
+  var pkgCount = pkgs.length;
+  google.load("visualization", "1", { packages:pkgs, callback: function() {
+  if (pkgCount != pkgs.length) {
+  // Race condition where another setTimeout call snuck in after us; if
+  // that call added a package, we must not shift its callback
+  return;
+}
+while (callbacks.length > 0)
+callbacks.shift()();
+} });
+}, 100);
+}
+ 
+// jsFooter
+</script>
+<!-- jsChart -->
+<script type="text/javascript" src="https://www.google.com/jsapi?callback=displayChartGeoChartID63c4434971fc"></script>
+<!-- divChart -->
+<div id="GeoChartID63c4434971fc" style="width: 600; height: 400;">
+
+</div>
+<div>
+<span>Data: Q1states2016engine.2 • Chart ID: <a href="Chart_GeoChartID63c4434971fc.html">GeoChartID63c4434971fc</a> • <a href="https://github.com/mages/googleVis">googleVis-0.6.2</a></span><br /> <!-- htmlFooter --> <span> R version 3.4.1 (2017-06-30) • <a href="https://developers.google.com/terms/">Google Terms of Use</a> • <a href="https://google-developers.appspot.com/chart/interactive/docs/gallery/geochart">Documentation and Data Policy</a> </span>
+</div>
+</body>
+</html>
+</div>
+<div id="we-then-repeated-this-process-for-the-mathematiciansstatisticians." class="section level3">
+<h3>We then repeated this process for the mathematicians/statisticians.</h3>
+<pre class="r"><code>Q1subsetmath.stat &lt;- subset(Q1, classification == &quot;Math-Stat&quot; , select=state:cycle) </code></pre>
+<pre class="r"><code>Q1subsetmath.stat2016 &lt;- subset(Q1subsetmath.stat, cycle == &quot;2016&quot; , select=state:cycle)</code></pre>
+<pre class="r"><code>Q1states2016math.stat=Q1subsetmath.stat2016%&gt;%group_by(state)%&gt;%summarize(transaction_mean=mean(transaction_amt))</code></pre>
+<pre class="r"><code>Q1states2016math.stat.2=Q1states2016math.stat[-c(8, 40, 53, 54),]</code></pre>
+<pre class="r"><code>Q1states2016math.stat.2$states=c(&quot;Alaska&quot;, &quot;Alabama&quot;, &quot;Arkansas&quot;, &quot;Arizona&quot;, &quot;California&quot;, &quot;Colorado&quot;, &quot;Connecticut&quot;, &quot;Delaware&quot;, &quot;Florida&quot;, &quot;Georgia&quot;, &quot;Hawaii&quot;, &quot;Iowa&quot;, &quot;Idaho&quot;, &quot;Illinois&quot;, &quot;Indiana&quot;, &quot;Kansas&quot;, &quot;Kentucky&quot;, &quot;Louisiana&quot;, &quot;Massachusetts&quot;, &quot;Maryland&quot;, &quot;Maine&quot;, &quot;Michigan&quot;, &quot;Minnesota&quot;, &quot;Missouri&quot;, &quot;Mississippi&quot;, &quot;Montana&quot;, &quot;North Carolina&quot;, &quot;North Dakota&quot;, &quot;Nebraska&quot;, &quot;New Hampshire&quot;, &quot;New Jersey&quot;, &quot;New Mexico&quot;, &quot;Nevada&quot;, &quot;New York&quot;, &quot;Ohio&quot;, &quot;Oklahoma&quot;, &quot;Oregon&quot;, &quot;Pennsylvania&quot;, &quot;Rhode Island&quot;, &quot;South Carolina&quot;, &quot;South Dakota&quot;, &quot;Tennessee&quot;, &quot;Texas&quot;, &quot;Utah&quot;, &quot;Virginia&quot;, &quot;Vermont&quot;, &quot;Washington&quot;, &quot;Wisconsin&quot;, &quot;West Virginia&quot;, &quot;Wyoming&quot;)</code></pre>
+<pre class="r"><code>GeoStates2016math.stat &lt;- gvisGeoChart(Q1states2016math.stat.2, &quot;states&quot;, &quot;transaction_mean&quot;, options=list(region=&quot;US&quot;, displayMode=&quot;regions&quot;, resolution=&quot;provinces&quot;, width=600, height=400))
+GeoStates2016math.stat</code></pre>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>
+GeoChartID63c43a604f99
+</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<style type="text/css">
+body {
+  color: #444444;
+  font-family: Arial,Helvetica,sans-serif;
+  font-size: 75%;
+  }
+  a {
+  color: #4D87C7;
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+<p><!-- GeoChart generated in R 3.4.1 by googleVis 0.6.2 package --> <!-- Tue Dec 12 11:22:36 2017 --></p>
+<!-- jsHeader -->
+<script type="text/javascript">
+ 
+// jsData 
+function gvisDataGeoChartID63c43a604f99 () {
+var data = new google.visualization.DataTable();
+var datajson =
+[
+ [
+"Alaska",
+66.66666667
+],
+[
+"Alabama",
+64.52941176
+],
+[
+"Arkansas",
+108.65625
+],
+[
+"Arizona",
+39.88505747
+],
+[
+"California",
+179.1603834
+],
+[
+"Colorado",
+55.34715026
+],
+[
+"Connecticut",
+81.92735043
+],
+[
+"Delaware",
+140.2380952
+],
+[
+"Florida",
+99.50533808
+],
+[
+"Georgia",
+91.95813953
+],
+[
+"Hawaii",
+84.64285714
+],
+[
+"Iowa",
+38.63095238
+],
+[
+"Idaho",
+37.5
+],
+[
+"Illinois",
+170.2094862
+],
+[
+"Indiana",
+103.9638554
+],
+[
+"Kansas",
+63.43243243
+],
+[
+"Kentucky",
+142.4827586
+],
+[
+"Louisiana",
+162.625
+],
+[
+"Massachusetts",
+134.8584475
+],
+[
+"Maryland",
+101.2306548
+],
+[
+"Maine",
+128.5940594
+],
+[
+"Michigan",
+89.96183206
+],
+[
+"Minnesota",
+90.41566265
+],
+[
+"Missouri",
+383.0851064
+],
+[
+"Mississippi",
+103.75
+],
+[
+"Montana",
+356
+],
+[
+"North Carolina",
+387.3333333
+],
+[
+"North Dakota",
+38.33333333
+],
+[
+"Nebraska",
+25.67948718
+],
+[
+"New Hampshire",
+61.82178218
+],
+[
+"New Jersey",
+95.96068796
+],
+[
+"New Mexico",
+126.952381
+],
+[
+"Nevada",
+28.25
+],
+[
+"New York",
+72.44552058
+],
+[
+"Ohio",
+309.5666667
+],
+[
+"Oklahoma",
+22.61904762
+],
+[
+"Oregon",
+65.23846154
+],
+[
+"Pennsylvania",
+95.77629063
+],
+[
+"Rhode Island",
+55.12820513
+],
+[
+"South Carolina",
+70.62857143
+],
+[
+"South Dakota",
+56.66666667
+],
+[
+"Tennessee",
+35.92666667
+],
+[
+"Texas",
+108.0074074
+],
+[
+"Utah",
+128.3859649
+],
+[
+"Virginia",
+60.76923077
+],
+[
+"Vermont",
+66.73417722
+],
+[
+"Washington",
+121.4655738
+],
+[
+"Wisconsin",
+105.5487179
+],
+[
+"West Virginia",
+37.47826087
+],
+[
+"Wyoming",
+67.6
+] 
+];
+data.addColumn('string','states');
+data.addColumn('number','transaction_mean');
+data.addRows(datajson);
+return(data);
+}
+ 
+// jsDrawChart
+function drawChartGeoChartID63c43a604f99() {
+var data = gvisDataGeoChartID63c43a604f99();
+var options = {};
+options["width"] = 600;
+options["height"] = 400;
+options["region"] = "US";
+options["displayMode"] = "regions";
+options["resolution"] = "provinces";
+
+    var chart = new google.visualization.GeoChart(
+    document.getElementById('GeoChartID63c43a604f99')
+    );
+    chart.draw(data,options);
+    
+
+}
+  
+ 
+// jsDisplayChart
+(function() {
+var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+var chartid = "geochart";
+  
+// Manually see if chartid is in pkgs (not all browsers support Array.indexOf)
+var i, newPackage = true;
+for (i = 0; newPackage && i < pkgs.length; i++) {
+if (pkgs[i] === chartid)
+newPackage = false;
+}
+if (newPackage)
+  pkgs.push(chartid);
+  
+// Add the drawChart function to the global list of callbacks
+callbacks.push(drawChartGeoChartID63c43a604f99);
+})();
+function displayChartGeoChartID63c43a604f99() {
+  var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+  var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+  window.clearTimeout(window.__gvisLoad);
+  // The timeout is set to 100 because otherwise the container div we are
+  // targeting might not be part of the document yet
+  window.__gvisLoad = setTimeout(function() {
+  var pkgCount = pkgs.length;
+  google.load("visualization", "1", { packages:pkgs, callback: function() {
+  if (pkgCount != pkgs.length) {
+  // Race condition where another setTimeout call snuck in after us; if
+  // that call added a package, we must not shift its callback
+  return;
+}
+while (callbacks.length > 0)
+callbacks.shift()();
+} });
+}, 100);
+}
+ 
+// jsFooter
+</script>
+<!-- jsChart -->
+<script type="text/javascript" src="https://www.google.com/jsapi?callback=displayChartGeoChartID63c43a604f99"></script>
+<!-- divChart -->
+<div id="GeoChartID63c43a604f99" style="width: 600; height: 400;">
+
+</div>
+<div>
+<span>Data: Q1states2016math.stat.2 • Chart ID: <a href="Chart_GeoChartID63c43a604f99.html">GeoChartID63c43a604f99</a> • <a href="https://github.com/mages/googleVis">googleVis-0.6.2</a></span><br /> <!-- htmlFooter --> <span> R version 3.4.1 (2017-06-30) • <a href="https://developers.google.com/terms/">Google Terms of Use</a> • <a href="https://google-developers.appspot.com/chart/interactive/docs/gallery/geochart">Documentation and Data Policy</a> </span>
+</div>
+</body>
+</html>
+<div id="the-most-striking-observation-we-made-from-the-exploration-of-donations-made-by-the-different-classifications-of-jobs-was-the-ranges-of-donations-from-the-various-states.-in-2016-the-range-of-average-donations-in-the-united-states-from-scientists-was-51-287.-the-range-of-average-donations-in-the-united-states-from-engineers-was-61-475.-the-range-of-average-donations-in-the-united-states-from-mathematiciansstatisticians-was-23-387.-engineers-had-the-highest-range-of-average-donations.-this-is-likely-because-they-typically-earn-more-than-scientists-and-mathematiciansstatisticians.-the-wide-range-help-by-mathematiciansstatisticians-is-likely-due-to-the-wide-range-of-incomes-held-by-someone-in-that-profession." class="section level4">
+<h4>The most striking observation we made from the exploration of donations made by the different classifications of jobs was the ranges of donations from the various states. In 2016 the range of average donations in the United States from scientists was $51-$287. The range of average donations in the United States from engineers was $61-$475. The range of average donations in the United States from mathematicians/statisticians was $23-$387. Engineers had the highest range of average donations. This is likely because they typically earn more than scientists and mathematicians/statisticians. The wide range help by mathematicians/statisticians is likely due to the wide range of incomes held by someone in that profession.</h4>
+</div>
+</div>
+</div>
+<div id="lastly-we-looked-at-the-differences-in-donations-from-people-in-science-intensive-fields-in-presidential-elections-vs-housesenate-elections." class="section level2">
+<h2>Lastly we looked at the differences in donations from people in science intensive fields in Presidential elections vs House/Senate elections.</h2>
+<div id="we-started-by-condensing-our-data-to-only-look-at-the-donations-from-people-in-science-intensive-fields-during-the-housesenate-election-cycles." class="section level4">
+<h4>We started by condensing our data to only look at the donations from people in science intensive fields during the House/Senate election cycles.</h4>
+<pre class="r"><code>Q1subsetHouse &lt;- subset(Q1, cycle == &quot;2006&quot; | cycle == &quot;2010&quot; | cycle == &quot;2014&quot; , select=state:cycle) </code></pre>
+</div>
+<div id="here-we-found-the-mean-donation-made-by-people-in-science-intensive-fields-in-senatehouse-election-cycles-based-on-the-state-they-are-from." class="section level4">
+<h4>Here we found the mean donation made by people in science intensive fields in Senate/House election cycles based on the state they are from.</h4>
+<pre class="r"><code>Q1statesHouse=Q1subsetHouse%&gt;%group_by(state)%&gt;%summarize(transaction_mean=mean(transaction_amt))</code></pre>
+</div>
+<div id="the-data-included-information-from-some-of-the-us-territories-and-had-some-holes-so-we-eliminated-all-of-the-rows-that-did-not-pertain-to-the-50-united-states.-2" class="section level4">
+<h4>The data included information from some of the US territories and had some holes, so we eliminated all of the rows that did not pertain to the 50 United States.</h4>
+<pre class="r"><code>Q1statesHouse.2=Q1statesHouse[-c(8, 12, 27, 42, 50, 56, 57),]</code></pre>
+</div>
+<div id="here-we-changed-the-names-of-states-from-their-abbreviated-form-to-their-actual-name-so-our-package-can-recognize-them.-2" class="section level4">
+<h4>Here we changed the names of states from their abbreviated form to their actual name so our package can recognize them.</h4>
+<pre class="r"><code>Q1statesHouse.2$states=c(&quot;Alaska&quot;, &quot;Alabama&quot;, &quot;Arkansas&quot;, &quot;Arizona&quot;, &quot;California&quot;, &quot;Colorado&quot;, &quot;Connecticut&quot;, &quot;Delaware&quot;, &quot;Florida&quot;, &quot;Georgia&quot;, &quot;Hawaii&quot;, &quot;Iowa&quot;, &quot;Idaho&quot;, &quot;Illinois&quot;, &quot;Indiana&quot;, &quot;Kansas&quot;, &quot;Kentucky&quot;, &quot;Louisiana&quot;, &quot;Massachusetts&quot;, &quot;Maryland&quot;, &quot;Maine&quot;, &quot;Michigan&quot;, &quot;Minnesota&quot;, &quot;Missouri&quot;, &quot;Mississippi&quot;, &quot;Montana&quot;, &quot;North Carolina&quot;, &quot;North Dakota&quot;, &quot;Nebraska&quot;, &quot;New Hampshire&quot;, &quot;New Jersey&quot;, &quot;New Mexico&quot;, &quot;Nevada&quot;, &quot;New York&quot;, &quot;Ohio&quot;, &quot;Oklahoma&quot;, &quot;Oregon&quot;, &quot;Pennsylvania&quot;, &quot;Rhode Island&quot;, &quot;South Carolina&quot;, &quot;South Dakota&quot;, &quot;Tennessee&quot;, &quot;Texas&quot;, &quot;Utah&quot;, &quot;Virginia&quot;, &quot;Vermont&quot;, &quot;Washington&quot;, &quot;Wisconsin&quot;, &quot;West Virginia&quot;, &quot;Wyoming&quot;)</code></pre>
+</div>
+<div id="lastly-we-utilized-a-google-visualization-geo-chart-of-the-united-states.-we-shaded-each-state-based-on-the-average-donation-made-by-people-in-science-intensive-fields-in-senatehouse-election-cycles.-the-darker-the-shade-the-greater-average-donation." class="section level3">
+<h3>Lastly we utilized a google visualization geo chart of the United States. We shaded each state based on the average donation made by people in science intensive fields in Senate/House election cycles. The darker the shade, the greater average donation.</h3>
+<pre class="r"><code>GeoStatesHouse &lt;- gvisGeoChart(Q1statesHouse.2, &quot;states&quot;, &quot;transaction_mean&quot;, options=list(region=&quot;US&quot;, displayMode=&quot;regions&quot;, resolution=&quot;provinces&quot;, width=600, height=400))
+GeoStatesHouse</code></pre>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>
+GeoChartID63c4428e2d74
+</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<style type="text/css">
+body {
+  color: #444444;
+  font-family: Arial,Helvetica,sans-serif;
+  font-size: 75%;
+  }
+  a {
+  color: #4D87C7;
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+<p><!-- GeoChart generated in R 3.4.1 by googleVis 0.6.2 package --> <!-- Tue Dec 12 11:22:37 2017 --></p>
+<!-- jsHeader -->
+<script type="text/javascript">
+ 
+// jsData 
+function gvisDataGeoChartID63c4428e2d74 () {
+var data = new google.visualization.DataTable();
+var datajson =
+[
+ [
+"Alaska",
+440.1028037
+],
+[
+"Alabama",
+727.5072993
+],
+[
+"Arkansas",
+621.4372093
+],
+[
+"Arizona",
+518.8641553
+],
+[
+"California",
+645.9985827
+],
+[
+"Colorado",
+607.0384428
+],
+[
+"Connecticut",
+557.6903226
+],
+[
+"Delaware",
+691.9147727
+],
+[
+"Florida",
+675.2475073
+],
+[
+"Georgia",
+527.5412844
+],
+[
+"Hawaii",
+807.4145383
+],
+[
+"Iowa",
+488.6484848
+],
+[
+"Idaho",
+578.8426966
+],
+[
+"Illinois",
+579.3822415
+],
+[
+"Indiana",
+912.1968992
+],
+[
+"Kansas",
+481.3479263
+],
+[
+"Kentucky",
+783.4667897
+],
+[
+"Louisiana",
+897.8844622
+],
+[
+"Massachusetts",
+489.5687023
+],
+[
+"Maryland",
+573.004284
+],
+[
+"Maine",
+459.3140496
+],
+[
+"Michigan",
+523.912963
+],
+[
+"Minnesota",
+492.5557432
+],
+[
+"Missouri",
+485.9150327
+],
+[
+"Mississippi",
+632.754717
+],
+[
+"Montana",
+613.5525114
+],
+[
+"North Carolina",
+538.7874601
+],
+[
+"North Dakota",
+672.4818182
+],
+[
+"Nebraska",
+573.7218045
+],
+[
+"New Hampshire",
+736.3033981
+],
+[
+"New Jersey",
+637.0581535
+],
+[
+"New Mexico",
+606.372862
+],
+[
+"Nevada",
+556.6415094
+],
+[
+"New York",
+678.6001632
+],
+[
+"Ohio",
+681.7813411
+],
+[
+"Oklahoma",
+923.5803324
+],
+[
+"Oregon",
+484.3568702
+],
+[
+"Pennsylvania",
+575.945984
+],
+[
+"Rhode Island",
+653.4234234
+],
+[
+"South Carolina",
+595.9656085
+],
+[
+"South Dakota",
+729.4040404
+],
+[
+"Tennessee",
+664.6653846
+],
+[
+"Texas",
+745.4921624
+],
+[
+"Utah",
+592.0738636
+],
+[
+"Virginia",
+515.4540295
+],
+[
+"Vermont",
+366.0795455
+],
+[
+"Washington",
+612.2846154
+],
+[
+"Wisconsin",
+473.5714286
+],
+[
+"West Virginia",
+682.8823529
+],
+[
+"Wyoming",
+506.8208092
+] 
+];
+data.addColumn('string','states');
+data.addColumn('number','transaction_mean');
+data.addRows(datajson);
+return(data);
+}
+ 
+// jsDrawChart
+function drawChartGeoChartID63c4428e2d74() {
+var data = gvisDataGeoChartID63c4428e2d74();
+var options = {};
+options["width"] = 600;
+options["height"] = 400;
+options["region"] = "US";
+options["displayMode"] = "regions";
+options["resolution"] = "provinces";
+
+    var chart = new google.visualization.GeoChart(
+    document.getElementById('GeoChartID63c4428e2d74')
+    );
+    chart.draw(data,options);
+    
+
+}
+  
+ 
+// jsDisplayChart
+(function() {
+var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+var chartid = "geochart";
+  
+// Manually see if chartid is in pkgs (not all browsers support Array.indexOf)
+var i, newPackage = true;
+for (i = 0; newPackage && i < pkgs.length; i++) {
+if (pkgs[i] === chartid)
+newPackage = false;
+}
+if (newPackage)
+  pkgs.push(chartid);
+  
+// Add the drawChart function to the global list of callbacks
+callbacks.push(drawChartGeoChartID63c4428e2d74);
+})();
+function displayChartGeoChartID63c4428e2d74() {
+  var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+  var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+  window.clearTimeout(window.__gvisLoad);
+  // The timeout is set to 100 because otherwise the container div we are
+  // targeting might not be part of the document yet
+  window.__gvisLoad = setTimeout(function() {
+  var pkgCount = pkgs.length;
+  google.load("visualization", "1", { packages:pkgs, callback: function() {
+  if (pkgCount != pkgs.length) {
+  // Race condition where another setTimeout call snuck in after us; if
+  // that call added a package, we must not shift its callback
+  return;
+}
+while (callbacks.length > 0)
+callbacks.shift()();
+} });
+}, 100);
+}
+ 
+// jsFooter
+</script>
+<!-- jsChart -->
+<script type="text/javascript" src="https://www.google.com/jsapi?callback=displayChartGeoChartID63c4428e2d74"></script>
+<!-- divChart -->
+<div id="GeoChartID63c4428e2d74" style="width: 600; height: 400;">
+
+</div>
+<div>
+<span>Data: Q1statesHouse.2 • Chart ID: <a href="Chart_GeoChartID63c4428e2d74.html">GeoChartID63c4428e2d74</a> • <a href="https://github.com/mages/googleVis">googleVis-0.6.2</a></span><br /> <!-- htmlFooter --> <span> R version 3.4.1 (2017-06-30) • <a href="https://developers.google.com/terms/">Google Terms of Use</a> • <a href="https://google-developers.appspot.com/chart/interactive/docs/gallery/geochart">Documentation and Data Policy</a> </span>
+</div>
+</body>
+</html>
+</div>
+<div id="we-then-repeated-this-process-for-the-presidential-election-cycles." class="section level3">
+<h3>We then repeated this process for the Presidential election cycles.</h3>
+<pre class="r"><code>Q1subsetPresident &lt;- subset(Q1,  cycle == &quot;2008&quot; | cycle == &quot;2012&quot; | cycle == &quot;2016&quot;, select=state:cycle) </code></pre>
+<pre class="r"><code>Q1statesPresident=Q1subsetPresident%&gt;%group_by(state)%&gt;%summarize(transaction_mean=mean(transaction_amt))</code></pre>
+<pre class="r"><code>Q1statesPresident.2=Q1statesPresident[-c(1, 2, 3, 6, 8, 13, 17, 46, 47, 55, 61, 62),]</code></pre>
+<pre class="r"><code>Q1statesPresident.2$states=c(&quot;Alaska&quot;, &quot;Alabama&quot;, &quot;Arkansas&quot;, &quot;Arizona&quot;, &quot;California&quot;, &quot;Colorado&quot;, &quot;Connecticut&quot;, &quot;Delaware&quot;, &quot;Florida&quot;, &quot;Georgia&quot;, &quot;Hawaii&quot;, &quot;Iowa&quot;, &quot;Idaho&quot;, &quot;Illinois&quot;, &quot;Indiana&quot;, &quot;Kansas&quot;, &quot;Kentucky&quot;, &quot;Louisiana&quot;, &quot;Massachusetts&quot;, &quot;Maryland&quot;, &quot;Maine&quot;, &quot;Michigan&quot;, &quot;Minnesota&quot;, &quot;Missouri&quot;, &quot;Mississippi&quot;, &quot;Montana&quot;, &quot;North Carolina&quot;, &quot;North Dakota&quot;, &quot;Nebraska&quot;, &quot;New Hampshire&quot;, &quot;New Jersey&quot;, &quot;New Mexico&quot;, &quot;Nevada&quot;, &quot;New York&quot;, &quot;Ohio&quot;, &quot;Oklahoma&quot;, &quot;Oregon&quot;, &quot;Pennsylvania&quot;, &quot;Rhode Island&quot;, &quot;South Carolina&quot;, &quot;South Dakota&quot;, &quot;Tennessee&quot;, &quot;Texas&quot;, &quot;Utah&quot;, &quot;Virginia&quot;, &quot;Vermont&quot;, &quot;Washington&quot;, &quot;Wisconsin&quot;, &quot;West Virginia&quot;, &quot;Wyoming&quot;)</code></pre>
+<pre class="r"><code>GeoStatesPresident &lt;- gvisGeoChart(Q1statesPresident.2, &quot;states&quot;, &quot;transaction_mean&quot;, options=list(region=&quot;US&quot;, displayMode=&quot;regions&quot;, resolution=&quot;provinces&quot;, width=600, height=400))
+GeoStatesPresident</code></pre>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>
+GeoChartID63c44825674a
+</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<style type="text/css">
+body {
+  color: #444444;
+  font-family: Arial,Helvetica,sans-serif;
+  font-size: 75%;
+  }
+  a {
+  color: #4D87C7;
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+<p><!-- GeoChart generated in R 3.4.1 by googleVis 0.6.2 package --> <!-- Tue Dec 12 11:22:37 2017 --></p>
+<!-- jsHeader -->
+<script type="text/javascript">
+ 
+// jsData 
+function gvisDataGeoChartID63c44825674a () {
+var data = new google.visualization.DataTable();
+var datajson =
+[
+ [
+"Alaska",
+206.5522755
+],
+[
+"Alabama",
+273.8814956
+],
+[
+"Arkansas",
+253.8986403
+],
+[
+"Arizona",
+205.0551661
+],
+[
+"California",
+223.8410776
+],
+[
+"Colorado",
+247.4800497
+],
+[
+"Connecticut",
+212.4778857
+],
+[
+"Delaware",
+200.8159757
+],
+[
+"Florida",
+278.949374
+],
+[
+"Georgia",
+201.3061076
+],
+[
+"Hawaii",
+419.8310413
+],
+[
+"Iowa",
+193.2280405
+],
+[
+"Idaho",
+188.569788
+],
+[
+"Illinois",
+230.2768519
+],
+[
+"Indiana",
+290.3055066
+],
+[
+"Kansas",
+190.7710057
+],
+[
+"Kentucky",
+426.838228
+],
+[
+"Louisiana",
+558.0859128
+],
+[
+"Massachusetts",
+206.9246465
+],
+[
+"Maryland",
+230.0429787
+],
+[
+"Maine",
+157.9821556
+],
+[
+"Michigan",
+221.036215
+],
+[
+"Minnesota",
+167.4735963
+],
+[
+"Missouri",
+183.6204657
+],
+[
+"Mississippi",
+364.1491443
+],
+[
+"Montana",
+310.7629548
+],
+[
+"North Carolina",
+176.0777222
+],
+[
+"North Dakota",
+327.8425414
+],
+[
+"Nebraska",
+162.2627866
+],
+[
+"New Hampshire",
+213.7506086
+],
+[
+"New Jersey",
+275.9985196
+],
+[
+"New Mexico",
+287.7649852
+],
+[
+"Nevada",
+262.7706715
+],
+[
+"New York",
+208.1003078
+],
+[
+"Ohio",
+237.8424415
+],
+[
+"Oklahoma",
+532.081201
+],
+[
+"Oregon",
+144.265
+],
+[
+"Pennsylvania",
+240.8691812
+],
+[
+"Rhode Island",
+134.6002815
+],
+[
+"South Carolina",
+240.8825696
+],
+[
+"South Dakota",
+295.4288425
+],
+[
+"Tennessee",
+226.366129
+],
+[
+"Texas",
+317.4658807
+],
+[
+"Utah",
+191.4496774
+],
+[
+"Virginia",
+238.4741086
+],
+[
+"Vermont",
+92.08079187
+],
+[
+"Washington",
+211.7025341
+],
+[
+"Wisconsin",
+185.7833666
+],
+[
+"West Virginia",
+362.9501823
+],
+[
+"Wyoming",
+384.2857143
+] 
+];
+data.addColumn('string','states');
+data.addColumn('number','transaction_mean');
+data.addRows(datajson);
+return(data);
+}
+ 
+// jsDrawChart
+function drawChartGeoChartID63c44825674a() {
+var data = gvisDataGeoChartID63c44825674a();
+var options = {};
+options["width"] = 600;
+options["height"] = 400;
+options["region"] = "US";
+options["displayMode"] = "regions";
+options["resolution"] = "provinces";
+
+    var chart = new google.visualization.GeoChart(
+    document.getElementById('GeoChartID63c44825674a')
+    );
+    chart.draw(data,options);
+    
+
+}
+  
+ 
+// jsDisplayChart
+(function() {
+var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+var chartid = "geochart";
+  
+// Manually see if chartid is in pkgs (not all browsers support Array.indexOf)
+var i, newPackage = true;
+for (i = 0; newPackage && i < pkgs.length; i++) {
+if (pkgs[i] === chartid)
+newPackage = false;
+}
+if (newPackage)
+  pkgs.push(chartid);
+  
+// Add the drawChart function to the global list of callbacks
+callbacks.push(drawChartGeoChartID63c44825674a);
+})();
+function displayChartGeoChartID63c44825674a() {
+  var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+  var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+  window.clearTimeout(window.__gvisLoad);
+  // The timeout is set to 100 because otherwise the container div we are
+  // targeting might not be part of the document yet
+  window.__gvisLoad = setTimeout(function() {
+  var pkgCount = pkgs.length;
+  google.load("visualization", "1", { packages:pkgs, callback: function() {
+  if (pkgCount != pkgs.length) {
+  // Race condition where another setTimeout call snuck in after us; if
+  // that call added a package, we must not shift its callback
+  return;
+}
+while (callbacks.length > 0)
+callbacks.shift()();
+} });
+}, 100);
+}
+ 
+// jsFooter
+</script>
+<!-- jsChart -->
+<script type="text/javascript" src="https://www.google.com/jsapi?callback=displayChartGeoChartID63c44825674a"></script>
+<!-- divChart -->
+<div id="GeoChartID63c44825674a" style="width: 600; height: 400;">
+
+</div>
+<div>
+<span>Data: Q1statesPresident.2 • Chart ID: <a href="Chart_GeoChartID63c44825674a.html">GeoChartID63c44825674a</a> • <a href="https://github.com/mages/googleVis">googleVis-0.6.2</a></span><br /> <!-- htmlFooter --> <span> R version 3.4.1 (2017-06-30) • <a href="https://developers.google.com/terms/">Google Terms of Use</a> • <a href="https://google-developers.appspot.com/chart/interactive/docs/gallery/geochart">Documentation and Data Policy</a> </span>
+</div>
+</body>
+</html>
+<div id="the-most-striking-observation-we-had-from-comparing-the-donations-in-housesenate-election-cycles-and-presidential-election-cycles-is-again-the-differences-in-average-donation-range.-if-merely-looking-at-the-two-charts-the-shading-looks-extremely-similar-but-range-in-the-housesenate-elections-is-366-924-whereas-the-range-in-presidential-elections-is-only-92-558.-the-interest-level-in-presidental-elections-is-significanly-higher-than-senatehouse-elections-so-more-people-are-likely-to-donatate-whereas-only-the-committed-and-likely-wealthier-people-will-donate-in-senatehouse-elections.-this-will-contribute-to-the-much-higher-donations-averages-in-the-senatehouse-elections." class="section level4">
+<h4>The most striking observation we had from comparing the donations in House/Senate election cycles and Presidential election cycles is again the differences in average donation range. If merely looking at the two charts, the shading looks extremely similar, but range in the House/Senate elections is $366-$924 whereas the range in Presidential elections is only $92-$558. The interest level in Presidental elections is significanly higher than Senate/House elections, so more people are likely to donatate whereas only the committed and likely wealthier people will donate in Senate/House elections. This will contribute to the much higher donations averages in the Senate/House elections.</h4>
+</div>
+</div>
+</div>
+</div>
+<div id="limitations" class="section level1">
+<h1>Limitations</h1>
+<div id="there-are-a-few-limitiations-and-problems-with-our-project.-they-mainly-concern-with-the-election-cycles.-our-comparison-of-housesenate-elections-and-presidential-elections-could-be-skewed-because-housesenate-elections-are-every-two-years-but-we-only-looked-at-the-election-cycles-that-did-not-fall-on-presidential-elections.-we-did-this-to-better-represent-the-difference-between-housesenate-and-presidential-elections-but-that-did-leave-out-some-data.-additionally-there-are-senate-elections-every-2-years-but-senators-serve-six-year-terms.-therefore-some-of-the-states-we-looked-at-may-not-have-been-having-a-senate-election-where-others-did.-in-general-we-did-not-have-a-good-idea-of-the-sample-size-we-were-exploring.-for-example-we-did-not-explore-the-ratio-of-scientists-to-engineers-to-mathematiciansstatisticians.-the-exploration-could-have-been-more-extensive-in-a-particular-category-making-the-data-skewed." class="section level3">
+<h3>There are a few limitiations and problems with our project. They mainly concern with the election cycles. Our comparison of House/Senate elections and Presidential elections could be skewed because House/Senate elections are every two years, but we only looked at the election cycles that did not fall on Presidential elections. We did this to better represent the difference between House/Senate and Presidential elections, but that did leave out some data. Additionally, there are Senate elections every 2 years, but Senators serve six year terms. Therefore, some of the states we looked at may not have been having a Senate election where others did. In general, we did not have a good idea of the sample size we were exploring. For example, we did not explore the ratio of scientists to engineers to mathematicians/statisticians. The exploration could have been more extensive in a particular category making the data skewed.</h3>
+</div>
+</div>
+<div id="conclusion" class="section level1">
+<h1>Conclusion</h1>
+<div id="after-completing-this-exploration-we-were-able-to-discover-that-there-were-significant-differences-in-the-average-donations-from-people-in-science-intensive-fields-during-the-obama-era-presidential-elections-compared-to-this-past-trump-era-election.-we-also-took-a-look-into-the-differences-between-the-average-donations-made-by-scientists-engineers-and-mathematiciansstatisticians-in-the-2016-election-cycle.-we-found-that-engineers-average-donation-was-higher-almost-exclusively-and-the-average-donations-of-mathematiciansstatisticans-had-the-largest-range-likely-due-to-the-wide-range-of-salaries-someone-from-that-profession-could-earn.-lastly-we-found-that-the-average-donation-made-in-a-senatehouse-election-is-significantly-higher-than-in-a-presidential-election.-we-determined-that-this-is-the-case-likely-because-fewer-more-committed-people-donate-in-senatehouse-elections-because-there-is-less-media-attention-given-to-those-election-cycles." class="section level3">
+<h3>After completing this exploration, we were able to discover that there were significant differences in the average donations from people in science intensive fields during the Obama era Presidential elections compared to this past Trump era election. We also took a look into the differences between the average donations made by scientists, engineers, and mathematicians/statisticians in the 2016 election cycle. We found that engineers’ average donation was higher almost exclusively and the average donations of mathematicians/statisticans had the largest range likely due to the wide range of salaries someone from that profession could earn. Lastly, we found that the average donation made in a Senate/House election is significantly higher than in a Presidential election. We determined that this is the case likely because fewer, more committed people donate in Senate/House elections because there is less media attention given to those election cycles.</h3>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

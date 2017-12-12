@@ -1,0 +1,282 @@
+---
+title: "DataVizProject2"
+author: "Brian Grob, Ryan Strong, Sam Johnson"
+date: "December 11, 2017"
+output:
+   html_document:
+    self_contained: no
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(echo = TRUE)
+#op <- options(gvis.plot.tag='chart') 
+```
+
+#Introduction
+###For this project, we looked at data on the political donations made by people who work in science intensive fields. This data extends from 2006 to 2016. In this exploration we focused in on the average donations from people in science intensive fields in each state over the past three presidential elections, the differences in donations between scientists, engineers, and mathematicians/statisticians, and the differences in donations in Presidetial elections vs Senate/House elections. 
+
+####First we downloaded the dataset.
+
+```{r}
+library(readr)
+Q1 <- read_csv("~/DataVizProject2/Workbook1.csv")
+View(Q1)
+```
+
+####Then we downloaded the necessary r packages
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(streamgraph)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(googleVis)
+library(datasets)
+library(gudatavizfa17)
+Q1=Q1
+```
+
+##Our First task was to study the differences in donations across different states among people with science-intensive jobs for Presidential elections across the three election cycles.
+
+####We started by condensing the data to only look at the donations made in the 2008 election cycle. 
+
+```{r}
+Q1subset2 <- subset(Q1, cycle == "2008" , select=state:cycle)
+```
+
+####Here we found the mean donation made by people who have science intensive jobs in 2008 based on the state they are from. 
+
+```{r}
+Q1states2008=Q1subset2%>%group_by(state)%>%summarize(transaction_mean=mean(transaction_amt))
+```
+
+####The data included information from some of the US territories and had some holes, so we eliminated all of the rows that did not pertain to the 50 United States.
+
+```{r}
+Q1states2008.2=Q1states2008[-c(3, 5, 10, 14, 43, 51, 57, 58),]
+```
+
+####Here we changed the names of states from their abbreviated form to their actual name so our package can recognize them. 
+
+```{r}
+Q1states2008.2$states=c("Alaska", "Alabama", "Arkansas", "Arizona", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Iowa", "Idaho", "Illinois", "Indiana", "Kansas", "Kentucky", "Louisiana", "Massachusetts", "Maryland", "Maine", "Michigan", "Minnesota", "Missouri", "Mississippi", "Montana", "North Carolina", "North Dakota", "Nebraska", "New Hampshire", "New Jersey", "New Mexico", "Nevada", "New York", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Virginia", "Vermont", "Washington", "Wisconsin", "West Virginia", "Wyoming")
+```
+
+###Lastly we utilized a google visualization geo chart of the United States. We shaded each state based on the average donation made by people who work in science intensive fields in 2008. The darker the shade, the greater average donation. 
+
+```{r results='asis'}
+GeoStates2008 <- gvisGeoChart(Q1states2008.2, "states", "transaction_mean", options=list(region="US", displayMode="regions", resolution="provinces", width=600, height=400))
+GeoStates2008
+```
+
+###We then repeated this process for the 2012 election cycle.
+
+```{r}
+Q1subset3 <- subset(Q1, cycle == "2012" , select=state:cycle)
+```
+
+```{r}
+Q1states2012=Q1subset3%>%group_by(state)%>%summarize(transaction_mean=mean(transaction_amt))
+```
+
+```{r}
+Q1states2012.2=Q1states2012[-c(1, 5, 10, 14, 43, 51, 57, 58),]
+```
+
+```{r}
+Q1states2012.2$states=c("Alaska", "Alabama", "Arkansas", "Arizona", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Iowa", "Idaho", "Illinois", "Indiana", "Kansas", "Kentucky", "Louisiana", "Massachusetts", "Maryland", "Maine", "Michigan", "Minnesota", "Missouri", "Mississippi", "Montana", "North Carolina", "North Dakota", "Nebraska", "New Hampshire", "New Jersey", "New Mexico", "Nevada", "New York", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Virginia", "Vermont", "Washington", "Wisconsin", "West Virginia", "Wyoming")
+```
+
+```{r results='asis'}
+GeoStates2012 <- gvisGeoChart(Q1states2012.2, "states", "transaction_mean", options=list(region="US", displayMode="regions", resolution="provinces", width=600, height=400))
+GeoStates2012
+```
+
+###We then repeated this process for the the 2016 election cycle.
+
+```{r}
+Q1subset4 <- subset(Q1, cycle == "2016" , select=state:cycle)
+```
+
+```{r}
+Q1states2016=Q1subset4%>%group_by(state)%>%summarize(transaction_mean=mean(transaction_amt))
+```
+
+```{r}
+Q1states2016.2=Q1states2016[-c(1, 2, 3, 6, 8, 13, 17, 46, 47, 55, 61, 62),]
+```
+
+```{r}
+Q1states2016.2$states=c("Alaska", "Alabama", "Arkansas", "Arizona", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Iowa", "Idaho", "Illinois", "Indiana", "Kansas", "Kentucky", "Louisiana", "Massachusetts", "Maryland", "Maine", "Michigan", "Minnesota", "Missouri", "Mississippi", "Montana", "North Carolina", "North Dakota", "Nebraska", "New Hampshire", "New Jersey", "New Mexico", "Nevada", "New York", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Virginia", "Vermont", "Washington", "Wisconsin", "West Virginia", "Wyoming")
+```
+
+```{r results='asis'}
+GeoStates2016 <- gvisGeoChart(Q1states2016.2, "states", "transaction_mean", options=list(region="US", displayMode="regions", resolution="provinces", width=600, height=400))
+GeoStates2016
+```
+
+####The most striking observation that comes from the comparison of the donation data across the three election cycles was how low the average donation was in 2016 in comparison to 2012 and 2008. In 2016 the range of average donations in the United States from science intensive workers was $61-$392. In 2012 and 2008, the ranges were $357-$816 and $370-$771 respectively. With the excessive media attention surrounding the 2016 election, we imagine more people felt called to donate to their political party. These people are likely less passionate than those who would have donated regardless, so their donations were likely smaller bringing the averages down. 
+
+####Another observation we made was that states that typically are Rebuplican leaning had the highest average donation in all three election cycles. States such as Oklahoma, Lousiana, and Kentucky were always near the top of average donations made by people in science intensive fields. Since most people in science intensive fields tend to lean Democratic, the people in these conservative states likely felt the need to donate more in order to change the political climate, so issues they care about, such as environmental issues, would be considered. 
+
+##Our next task was to determine if there were differences in donation patterns across the three types of classifications of science intensive fields: Engineers, Scientists, and Mathematicians/Statisticians.
+
+####We started by condensing our data to only look at the donations from scientists during the 2016 election cycle. 
+
+```{r}
+Q1subsetsci <- subset(Q1, classification == "Scientist" , select=state:cycle) 
+```
+
+```{r}
+Q1subsetsci2016 <- subset(Q1subsetsci, cycle == "2016" , select=state:cycle)
+```
+
+####Here we found the mean donation made by scientists in 2016 based on the state they are from. 
+```{r}
+Q1states2016sci=Q1subsetsci2016%>%group_by(state)%>%summarize(transaction_mean=mean(transaction_amt))
+```
+
+####The data included information from some of the US territories and had some holes, so we eliminated all of the rows that did not pertain to the 50 United States.
+
+```{r}
+Q1states2016sci.2=Q1states2016sci[-c(1, 2, 3, 6, 8, 13, 45, 53, 59, 60),]
+```
+
+####Here we changed the names of states from their abbreviated form to their actual name so our package can recognize them. 
+
+```{r}
+Q1states2016sci.2$states=c("Alaska", "Alabama", "Arkansas", "Arizona", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Iowa", "Idaho", "Illinois", "Indiana", "Kansas", "Kentucky", "Louisiana", "Massachusetts", "Maryland", "Maine", "Michigan", "Minnesota", "Missouri", "Mississippi", "Montana", "North Carolina", "North Dakota", "Nebraska", "New Hampshire", "New Jersey", "New Mexico", "Nevada", "New York", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Virginia", "Vermont", "Washington", "Wisconsin", "West Virginia", "Wyoming")
+```
+
+###Lastly we utilized a google visualization geo chart of the United States. We shaded each state based on the average donation made by scientists in 2016. The darker the shade, the greater average donation. 
+
+```{r results='asis'}
+GeoStates2016sci <- gvisGeoChart(Q1states2016sci.2, "states", "transaction_mean", options=list(region="US", displayMode="regions", resolution="provinces", width=600, height=400))
+GeoStates2016sci
+```
+
+###We then repeated this process for the engineers.
+
+```{r}
+Q1subsetengine <- subset(Q1, classification == "Engineer" , select=state:cycle) 
+```
+
+```{r}
+Q1subsetengine2016 <- subset(Q1subsetengine, cycle == "2016" , select=state:cycle)
+```
+
+```{r}
+Q1states2016engine=Q1subsetengine2016%>%group_by(state)%>%summarize(transaction_mean=mean(transaction_amt))
+```
+
+```{r}
+Q1states2016engine.2=Q1states2016engine[-c(1, 2, 5, 11, 15, 44, 45, 53, 59, 60),]
+```
+
+```{r}
+Q1states2016engine.2$states=c("Alaska", "Alabama", "Arkansas", "Arizona", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Iowa", "Idaho", "Illinois", "Indiana", "Kansas", "Kentucky", "Louisiana", "Massachusetts", "Maryland", "Maine", "Michigan", "Minnesota", "Missouri", "Mississippi", "Montana", "North Carolina", "North Dakota", "Nebraska", "New Hampshire", "New Jersey", "New Mexico", "Nevada", "New York", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Virginia", "Vermont", "Washington", "Wisconsin", "West Virginia", "Wyoming")
+```
+
+```{r results='asis'}
+GeoStates2016engine <- gvisGeoChart(Q1states2016engine.2, "states", "transaction_mean", options=list(region="US", displayMode="regions", resolution="provinces", width=600, height=400))
+GeoStates2016engine
+```
+
+###We then repeated this process for the mathematicians/statisticians.
+
+```{r}
+Q1subsetmath.stat <- subset(Q1, classification == "Math-Stat" , select=state:cycle) 
+```
+
+```{r}
+Q1subsetmath.stat2016 <- subset(Q1subsetmath.stat, cycle == "2016" , select=state:cycle)
+```
+
+```{r}
+Q1states2016math.stat=Q1subsetmath.stat2016%>%group_by(state)%>%summarize(transaction_mean=mean(transaction_amt))
+```
+
+```{r}
+Q1states2016math.stat.2=Q1states2016math.stat[-c(8, 40, 53, 54),]
+```
+
+```{r}
+Q1states2016math.stat.2$states=c("Alaska", "Alabama", "Arkansas", "Arizona", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Iowa", "Idaho", "Illinois", "Indiana", "Kansas", "Kentucky", "Louisiana", "Massachusetts", "Maryland", "Maine", "Michigan", "Minnesota", "Missouri", "Mississippi", "Montana", "North Carolina", "North Dakota", "Nebraska", "New Hampshire", "New Jersey", "New Mexico", "Nevada", "New York", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Virginia", "Vermont", "Washington", "Wisconsin", "West Virginia", "Wyoming")
+```
+
+```{r results='asis'}
+GeoStates2016math.stat <- gvisGeoChart(Q1states2016math.stat.2, "states", "transaction_mean", options=list(region="US", displayMode="regions", resolution="provinces", width=600, height=400))
+GeoStates2016math.stat
+```
+
+####The most striking observation we made from the exploration of donations made by the different classifications of jobs was the ranges of donations from the various states. In 2016 the range of average donations in the United States from scientists was $51-$287. The range of average donations in the United States from engineers was $61-$475. The range of average donations in the United States from mathematicians/statisticians was $23-$387. Engineers had the highest range of average donations. This is likely because they typically earn more than scientists and mathematicians/statisticians. The wide range help by mathematicians/statisticians is likely due to the wide range of incomes held by someone in that profession. 
+
+##Lastly we looked at the differences in donations from people in science intensive fields in Presidential elections vs House/Senate elections. 
+
+####We started by condensing our data to only look at the donations from people in science intensive fields during the House/Senate election cycles.
+
+```{r}
+Q1subsetHouse <- subset(Q1, cycle == "2006" | cycle == "2010" | cycle == "2014" , select=state:cycle) 
+```
+
+####Here we found the mean donation made by people in science intensive fields in Senate/House election cycles based on the state they are from.
+
+```{r}
+Q1statesHouse=Q1subsetHouse%>%group_by(state)%>%summarize(transaction_mean=mean(transaction_amt))
+```
+
+####The data included information from some of the US territories and had some holes, so we eliminated all of the rows that did not pertain to the 50 United States.
+
+```{r}
+Q1statesHouse.2=Q1statesHouse[-c(8, 12, 27, 42, 50, 56, 57),]
+```
+
+####Here we changed the names of states from their abbreviated form to their actual name so our package can recognize them.
+
+```{r}
+Q1statesHouse.2$states=c("Alaska", "Alabama", "Arkansas", "Arizona", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Iowa", "Idaho", "Illinois", "Indiana", "Kansas", "Kentucky", "Louisiana", "Massachusetts", "Maryland", "Maine", "Michigan", "Minnesota", "Missouri", "Mississippi", "Montana", "North Carolina", "North Dakota", "Nebraska", "New Hampshire", "New Jersey", "New Mexico", "Nevada", "New York", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Virginia", "Vermont", "Washington", "Wisconsin", "West Virginia", "Wyoming")
+```
+
+###Lastly we utilized a google visualization geo chart of the United States. We shaded each state based on the average donation made by people in science intensive fields in Senate/House election cycles. The darker the shade, the greater average donation.
+
+```{r results='asis'}
+GeoStatesHouse <- gvisGeoChart(Q1statesHouse.2, "states", "transaction_mean", options=list(region="US", displayMode="regions", resolution="provinces", width=600, height=400))
+GeoStatesHouse
+```
+
+###We then repeated this process for the Presidential election cycles.
+
+```{r}
+Q1subsetPresident <- subset(Q1,  cycle == "2008" | cycle == "2012" | cycle == "2016", select=state:cycle) 
+```
+
+```{r}
+Q1statesPresident=Q1subsetPresident%>%group_by(state)%>%summarize(transaction_mean=mean(transaction_amt))
+```
+
+```{r}
+Q1statesPresident.2=Q1statesPresident[-c(1, 2, 3, 6, 8, 13, 17, 46, 47, 55, 61, 62),]
+```
+
+```{r}
+Q1statesPresident.2$states=c("Alaska", "Alabama", "Arkansas", "Arizona", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Iowa", "Idaho", "Illinois", "Indiana", "Kansas", "Kentucky", "Louisiana", "Massachusetts", "Maryland", "Maine", "Michigan", "Minnesota", "Missouri", "Mississippi", "Montana", "North Carolina", "North Dakota", "Nebraska", "New Hampshire", "New Jersey", "New Mexico", "Nevada", "New York", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Virginia", "Vermont", "Washington", "Wisconsin", "West Virginia", "Wyoming")
+```
+
+```{r results='asis'}
+GeoStatesPresident <- gvisGeoChart(Q1statesPresident.2, "states", "transaction_mean", options=list(region="US", displayMode="regions", resolution="provinces", width=600, height=400))
+GeoStatesPresident
+```
+
+####The most striking observation we had from comparing the donations in House/Senate election cycles and Presidential election cycles is again the differences in average donation range. If merely looking at the two charts, the shading looks extremely similar, but range in the House/Senate elections is $366-$924 whereas the range in Presidential elections is only $92-$558. The interest level in Presidental elections is significanly higher than Senate/House elections, so more people are likely to donatate whereas only the committed and likely wealthier people will donate in Senate/House elections. This will contribute to the much higher donations averages in the Senate/House elections. 
+
+#Limitations
+
+###There are a few limitiations and problems with our project. They mainly concern with the election cycles. Our comparison of House/Senate elections and Presidential elections could be skewed because House/Senate elections are every two years, but we only looked at the election cycles that did not fall on Presidential elections. We did this to better represent the difference between House/Senate and Presidential elections, but that did leave out some data. Additionally, there are Senate elections every 2 years, but Senators serve six year terms. Therefore, some of the states we looked at may not have been having a Senate election where others did. In general, we did not have a good idea of the sample size we were exploring. For example, we did not explore the ratio of scientists to engineers to mathematicians/statisticians. The exploration could have been more extensive in a particular category making the data skewed. 
+
+#Conclusion
+
+###After completing this exploration, we were able to discover that there were significant differences in the average donations from people in science intensive fields during the Obama era Presidential elections compared to this past Trump era election. We also took a look into the differences between the average donations made by scientists, engineers, and mathematicians/statisticians in the 2016 election cycle. We found that engineers' average donation was higher almost exclusively and the average donations of mathematicians/statisticans had the largest range likely due to the wide range of salaries someone from that profession could earn. Lastly, we found that the average donation made in a Senate/House election is significantly higher than in a Presidential election. We determined that this is the case likely because fewer, more committed people donate in Senate/House elections because there is less media attention given to those election cycles. 
